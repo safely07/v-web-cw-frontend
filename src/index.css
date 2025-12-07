@@ -1,0 +1,149 @@
+@import '@fontsource-variable/cascadia-code';
+@import 'tailwindcss';
+
+/* === СБРОС СТИЛЕЙ === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* === CSS ПЕРЕМЕННЫЕ === */
+:root {
+  --background: #1e1e1e;
+  --foreground: #cccccc;
+  --list-activeSelectionBackground: #094771;
+  --button-background: #0e639c;
+  
+  /* Дополнительные для мессенджера */
+  --sidebar-background: #252526;
+  --input-background: #3c3c3c;
+  --chat-background: #2d2d30;
+  --message-sent: #0e639c;
+  --message-received: #3c3c3c;
+  --accent: #3794ff;
+  --online: #4ec9b0;
+  --offline: #808080;
+  --error: #f44747;
+  --success: #89d185;
+  --warning: #d7ba7d;
+  
+  --font-code: 'Cascadia Code Variable', 'Consolas', 'Monaco', 'Courier New', monospace;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  
+  --line-height: 1.5;
+  --font-size-small: 12px;
+  --font-size-normal: 13px;
+  --font-size-large: 14px;
+  --font-size-xlarge: 16px;
+}
+
+/* === БАЗОВЫЕ СТИЛИ КНОПОК === */
+button {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-normal);
+  background: var(--button-background);
+  color: white;
+  border: none;
+  border-radius: 2px;
+  padding: 6px 12px;
+  cursor: pointer;
+  height: 26px;
+  line-height: 1;
+}
+
+button:hover {
+  background: #1177bb;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* === БАЗОВЫЕ СТИЛИ ПОЛЕЙ ВВОДА === */
+input, textarea {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-normal);
+  background: var(--input-background);
+  color: var(--foreground);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  padding: 4px 8px;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #858585;
+}
+
+/* === ОСНОВНЫЕ СТИЛИ === */
+html, body {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-normal);
+  line-height: var(--line-height);
+  color: var(--foreground);
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga" 1, "calt" 1;
+}
+
+/* Моноширинный текст */
+code, pre, .monospace {
+  font-family: var(--font-code);
+  font-variant-ligatures: normal;
+  font-feature-settings: "calt" 1, "liga" 1;
+}
+
+/* Скроллбар */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #252526;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #424242;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #535353;
+}
+
+::-webkit-scrollbar-corner {
+  background: #1e1e1e;
+}
+
+/* Выделение текста */
+::selection {
+  background: var(--list-activeSelectionBackground);
+  color: white;
+}
+
+input:focus, textarea:focus {
+  outline: 1px solid #007acc;
+  outline-offset: -1px;
+}
+
+/* Заголовки */
+h1 { font-size: var(--font-size-xlarge); font-weight: 600; }
+h2 { font-size: var(--font-size-large); font-weight: 600; }
+h3 { font-size: var(--font-size-normal); font-weight: 600; }
+
+/* Ссылки */
+a {
+  color: #3794ff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Списки */
+ul, ol { padding-left: 20px; }
+li { margin: 4px 0; }
