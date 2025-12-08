@@ -1,13 +1,20 @@
-import './homeStyle.css'
-import { Header } from '../../../widgets/layout/header'
+import { ChatList } from "../../../widgets/chat-list";
+import { ChatWindow } from "../../../widgets/chat-window";
+import { Sidebar } from "../../../widgets/side-bar";
 
 export const Home = () => {
   return (
-    <>
-      <Header />
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1>Главная</h1>
+    <div className="h-screen flex bg-[#1e1e1e] text-gray-100">
+      {/* Левая панель - чаты (шире) */}
+      <div className="w-[380px] border-r border-gray-700 flex flex-col bg-[#252526]">
+        <Sidebar />
+        <ChatList />
       </div>
-    </>
-  )
-}
+      
+      {/* Центральная часть - сообщения (с отступами) */}
+      <div className="flex-1 flex flex-col">
+        <ChatWindow />
+      </div>
+    </div>
+  );
+};
