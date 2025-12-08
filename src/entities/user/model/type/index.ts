@@ -7,7 +7,4 @@ export type TUser = {
   displayName?: string;
   isOnline: boolean;
   lastSeen?: Date;
-  status?: string;
-  phoneNumber?: string;
-  bio?: string;
 };
