@@ -5,6 +5,7 @@ import { Home } from '../pages/home';
 import { LoginPage } from '../pages/login';
 import { RegisterPage } from '../pages/register'; 
 import { StoreProvider } from '../shared/utils/store-provider';
+import { useWebSocket } from '../shared/hooks/use-websocket';
 import './style/App.css';
 
 const ROUTES = [
@@ -23,6 +24,7 @@ const ROUTES = [
 ];
 
 export const App = withProvider(BrowserRouter)(() => {
+
 	return (
 		<StoreProvider>
 			<Layout>

@@ -14,19 +14,23 @@ export type TAppStore = {
 
     isLoading: boolean;
 
-    login: (email: string, password: string) => void;
+    error: string | null;
+
+    login: (email: string, password: string) => Promise<void>;
     logout: () => void;
 
     setActiveChat: (chatId: string) => void;
     createChat: (interlocutorId: string) => void;
     createGroupChat: (name: string, userIds: string[]) => void;
 
-    sendMessage: (chatId: string, text: string) => void;
-    loadMessages: (chatId: string) => void;
+    sendMessage: (chatId: string, text: string) => Promise<void>;
+    loadMessages: (chatId: string) => Promise<void>;
 
     updateUserStatus: (isOnline: boolean) => void;
 
     getActiveChat: () => TChat | undefined;
     getChatMessages: (chatId: string) => TMessage[];
     getInterlocutor: (chat: TChat) => TUser | undefined;
+    
+    handleIncomingMessage: (message: any) => void;
 };

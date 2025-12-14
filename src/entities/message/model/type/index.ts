@@ -6,4 +6,9 @@ export type TMessage = {
     text: string;
     createdAt: Date;
     isRead?: boolean;
+    user?: {
+        id: string;
+        username: string;
+        displayName?: string;
+    };
 };

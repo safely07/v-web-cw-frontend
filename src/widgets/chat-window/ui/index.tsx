@@ -1,118 +1,239 @@
-import React, { useState } from 'react';
-import { PressButton } from '../../../shared/ui/press-button';
-
-const mockMessages = [
-  { id: 1, text: 'Привет! Как дела с курсовой?', time: '10:30', isOwn: false },
-  { id: 2, text: 'Привет! Почти закончил фронтенд', time: '10:32', isOwn: true },
-  { id: 3, text: 'Сейчас делаю бекенд на Express + TypeORM', time: '10:33', isOwn: true },
-  { id: 4, text: 'Круто! Покажешь когда закончишь?', time: '10:35', isOwn: false },
-  { id: 5, text: 'Конечно! Завтра уже должен быть готов', time: '10:36', isOwn: true },
-  { id: 6, text: 'Отлично, жду результат!', time: '10:37', isOwn: false },
-  { id: 7, text: 'Кстати, какие технологии используешь для WebSocket?', time: '10:38', isOwn: false },
-  { id: 8, text: 'Socket.IO с интеграцией в Zustand стор', time: '10:40', isOwn: true },
-];
+// widgets/chat-window/SimpleChatWindow.tsx
+import React, { useState, useRef, useEffect } from 'react';
+import { useStore } from '../../../shared/lib/zustand/store-context';
+import { useWebSocket } from '../../../shared/hooks/use-websocket';
 
 export const ChatWindow = () => {
   const [message, setMessage] = useState('');
-
-  const handleSend = () => {
-    if (message.trim()) {
-      console.log('Отправка:', message);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Подписываемся на нужные части store
+  const activeChatId = useStore(state => state.activeChatId);
+  const currentUser = useStore(state => state.currentUser);
+  const chats = useStore(state => state.chats);
+  const messages = useStore(state => state.messages);
+  const loadMessages = useStore(state => state.loadMessages);
+  const sendMessage = useStore(state => state.sendMessage);
+  const handleIncomingMessage = useStore(state => state.handleIncomingMessage);
+  
+  // Получаем все методы из useWebSocket
+  const { isConnected, sendTyping, joinChat, leaveChat } = useWebSocket();
+  
+  // Находим активный чат
+  const activeChat = activeChatId 
+    ? chats.find(chat => chat.id === activeChatId)
+    : undefined;
+  
+  // Сообщения активного чата
+  const activeChatMessages = activeChatId 
+    ? messages[activeChatId] || [] 
+    : [];
+  
+  // Загрузка сообщений при изменении активного чата
+  useEffect(() => {
+    if (activeChatId) {
+      console.log(`📥 Загружаем сообщения для чата ${activeChatId}...`);
+      loadMessages(activeChatId).catch(console.error);
+    }
+  }, [activeChatId, loadMessages]);
+  
+  // Управление WebSocket подключением к чату
+  useEffect(() => {
+    console.log('🔄 Обновление WebSocket подключения к чату...');
+    console.log('📡 Состояние подключения:', isConnected);
+    console.log('💬 Активный чат:', activeChatId);
+    
+    if (!isConnected) {
+      console.log('🔌 WebSocket не подключен, пропускаем присоединение к чату');
+      return;
+    }
+    
+    if (activeChatId) {
+      console.log(`👥 Присоединяемся к чату ${activeChatId} через WebSocket...`);
+      joinChat(activeChatId);
+      
+      // Возвращаем функцию очистки для выхода из чата
+      return () => {
+        console.log(`👋 Выходим из чата ${activeChatId}`);
+        leaveChat(activeChatId);
+      };
+    }
+  }, [activeChatId, isConnected, joinChat, leaveChat]);
+  
+  // Автопрокрутка при изменении сообщений
+  useEffect(() => {
+    if (activeChatMessages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [activeChatMessages.length]);
+  
+  const handleSend = async () => {
+    if (!activeChatId || !message.trim()) return;
+    
+    try {
+      console.log('📤 Отправка сообщения:', message);
+      await sendMessage(activeChatId, message);
       setMessage('');
+    } catch (error) {
+      console.error('Ошибка отправки:', error);
     }
   };
-
+  
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
+  
+  const handleTyping = (isTyping: boolean) => {
+    if (!activeChatId || !currentUser) return;
+    console.log(`⌨️ Отправка события набора текста: ${isTyping}`);
+    sendTyping(activeChatId, isTyping);
+  };
+  
+  // Если нет активного чата
+  if (!activeChatId) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center bg-[#1e1e1e] text-gray-400">
+        <div className="text-5xl mb-4">👈</div>
+        <p className="text-xl">Выберите чат для начала общения</p>
+      </div>
+    );
+  }
+  
+  const formatTime = (date: Date) => {
+    return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col chat-window">
       {/* Шапка чата */}
-      <div className="p-5 border-b border-gray-700 bg-[#2d2d30] flex items-center justify-between">
+      <div className="p-5 border-b border-gray-800 bg-[#252526] flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-[#3c3c3c] rounded-full flex items-center justify-center border border-gray-600">
-            <span className="text-xl">👤</span>
+          <div className="chat-avatar" style={{ background: '#0e639c' }}>
+            <span>
+              {activeChat?.groupName?.slice(0,1) || 'Н'}
+            </span>
           </div>
           <div>
-            <h2 className="font-semibold text-lg">Анна Петрова</h2>
-            <p className="text-sm text-green-500">в сети</p>
+            <h2 className="font-semibold text-[16px] text-white mb-1">
+              {activeChat?.groupName || `${activeChatId?.slice(0, 16)}...`}
+              {activeChat?.isGroup && <span className="group-badge">Группа</span>}
+            </h2>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${isConnected ? 'status-online' : 'status-offline'}`}></div>
+                <p className="text-[13px] status-online">В сети</p>
+              </div>
+              <span className={`connection-status ${isConnected ? 'connection-status-connected' : 'connection-status-disconnected'}`}>
+                {isConnected ? '✓ WS' : '✗ WS'}
+              </span>
+              {activeChat && (
+                <span className="text-[12px] text-gray-500">
+                  {activeChat.members?.length || 0} участников
+                </span>
+              )}
+            </div>
           </div>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <button className="p-3 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 text-lg">
-            📞
-          </button>
-          <button className="p-3 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 text-lg">
-            📹
-          </button>
-          <button className="p-3 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 text-lg">
-            🔍
-          </button>
-          <button className="p-3 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 text-xl">
-            ⋮
-          </button>
         </div>
       </div>
 
-      {/* Сообщения с большими отступами */}
-      <div className="flex-1 overflow-y-auto px-10 py-8 space-y-7 bg-[#1e1e1e]">
-        {mockMessages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex ${msg.isOwn ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-[70%] rounded-2xl ${
-                msg.isOwn
-                  ? 'bg-[#2d5b8a] text-white rounded-br-none'  // Темно-синий для своих
-                  : 'bg-[#404040] text-[#e0e0e0] rounded-bl-none'  // Темно-серый для чужих
-              }`}
-            >
-              {/* Большие внутренние отступы */}
-              <div className="px-6 py-4">
-                <p className="text-base leading-relaxed">{msg.text}</p>
-                <p className={`text-xs mt-3 ${msg.isOwn ? 'text-[#a0c8ff]' : 'text-[#aaaaaa]'}`}>
-                  {msg.time}
-                </p>
-              </div>
+      {/* Сообщения */}
+      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 chat-scrollbar">
+        {activeChatMessages.length === 0 ? (
+          <div className="chat-placeholder h-full flex flex-col items-center justify-center">
+            <div className="text-4xl mb-4 opacity-30">💬</div>
+            <p className="text-[16px] font-medium mb-2">Нет сообщений</p>
+            <p className="text-[14px] mb-6">Начните общение первым!</p>
+            <div className="text-[12px] bg-[#252526] px-4 py-3 rounded">
+              <p>WebSocket: <span className={isConnected ? 'status-online' : 'status-offline'}>
+                {isConnected ? 'Подключен' : 'Отключен'}
+              </span></p>
             </div>
           </div>
-        ))}
+        ) : (
+          activeChatMessages.map((msg, index) => {
+            const isMyMessage = currentUser && msg.userId === currentUser.id;
+            const isTemporary = msg.id?.startsWith('temp-');
+            const showSender = !isMyMessage && msg.user && index > 0 && 
+              activeChatMessages[index - 1]?.userId !== msg.userId;
+            
+            return (
+              <div
+                key={msg.id}
+                className={`flex ${isMyMessage ? 'justify-end' : 'justify-start'} message-appear`}
+              >
+                <div className="max-w-[70%]">
+                  {/* Имя отправителя для групповых чатов */}
+                  {showSender && (
+                    <div className="message-sender mb-1 ml-2">
+                      {msg.user?.displayName || msg.user?.username || 'Пользователь'}
+                    </div>
+                  )}
+                  
+                  {/* Сообщение */}
+                  <div
+                    className={`px-4 py-3 ${isMyMessage ? 'message-bubble-sent' : 'message-bubble-received'} ${
+                      isTemporary ? 'message-bubble-temporary' : ''
+                    }`}
+                  >
+                    <p className="text-[14px] leading-relaxed whitespace-pre-wrap break-words">
+                      {msg.text}
+                    </p>
+                    
+                    {/* Время и статус */}
+                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/10">
+                      <span className="message-time text-[11px]">
+                        {formatTime(new Date(msg.createdAt))}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        {isTemporary && (
+                          <span className="text-[11px] text-[#d7ba7d] animate-pulse">Отправка...</span>
+                        )}
+                        {isMyMessage && (
+                          <span className="text-[11px] text-[#89d185]">✓</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Ввод сообщения */}
-      <div className="p-6 border-t border-gray-700 bg-[#2d2d30]">
-        <div className="flex items-end gap-5">
-          <button className="p-4 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 text-xl">
-            📎
-          </button>
-          
-          <div className="flex-1 relative">
+      <div className="p-5 border-t border-gray-800 bg-[#252526]">
+        <div className="flex items-end gap-4">
+          <div className="flex-1">
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyPress}
-              placeholder="Введите сообщение..."
-              className="w-full p-5 bg-[#3c3c3c] border border-gray-600 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-white"
+              onFocus={() => handleTyping(true)}
+              onBlur={() => handleTyping(false)}
+              placeholder="Введите сообщение (Shift+Enter для новой строки)..."
+              className="chat-input w-full p-4 rounded text-[14px] resize-none min-h-[80px]"
               rows={2}
             />
-            <button className="absolute right-4 bottom-4 p-2 hover:bg-gray-800 rounded text-gray-400 text-xl">
-              😊
-            </button>
+            <div className="text-[12px] text-gray-500 mt-2 flex items-center gap-4">
+              {message.length > 0 && (
+                <span>{message.length} символов</span>
+              )}
+              <span>Enter для отправки</span>
+            </div>
           </div>
           
-          <PressButton
+          <button
             onClick={handleSend}
             disabled={!message.trim()}
-            className="px-7 py-5 bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-white text-lg"
+            className="send-button px-6 py-4 text-[14px] font-medium"
           >
-            📤
-          </PressButton>
+            Отправить
+          </button>
         </div>
       </div>
     </div>
