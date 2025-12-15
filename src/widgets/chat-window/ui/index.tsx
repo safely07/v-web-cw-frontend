@@ -157,7 +157,7 @@ export const ChatWindow = () => {
                 key={msg.id}
                 className={`flex ${isMyMessage ? 'justify-end' : 'justify-start'} message-appear mx-2`}
               >
-                <div className={`max-w-[70%] min-w-[60px] ${isMyMessage ? 'mr-4' : 'ml-4'}`}>
+                <div className={`max-w-[90%] min-w-[60px] max-w-[500px] ${isMyMessage ? 'mr-4' : 'ml-4'}`}>
                   {/* Имя отправителя для групповых чатов */}
                   {showSender && (
                     <div className="message-sender mb-2 ml-2">
