@@ -164,22 +164,35 @@ li { margin: 4px 0; }
 .message-bubble-sent {
   background: var(--message-sent);
   color: white;
-  border-radius: 6px;
+  border-radius: 8px;
   border-top-right-radius: 2px;
+  padding: 10px 14px;
+  margin: 2px 0;
+  max-width: 100%;
 }
 
 /* Сообщение полученное */
 .message-bubble-received {
   background: var(--message-received);
   color: var(--foreground);
-  border-radius: 6px;
+  border-radius: 8px;
   border-top-left-radius: 2px;
+  padding: 10px 14px;
+  margin: 2px 0;
+  max-width: 100%;
 }
 
 /* Временное сообщение */
 .message-bubble-temporary {
   opacity: 0.7;
   filter: brightness(0.9);
+}
+
+/* Улучшенные отступы для текста сообщений */
+.message-bubble-sent p,
+.message-bubble-received p {
+  margin-bottom: 6px;
+  line-height: 0.8;
 }
 
 /* Индикатор набора текста */
@@ -212,6 +225,8 @@ li { margin: 4px 0; }
   color: var(--foreground);
   font-family: var(--font-ui);
   font-size: var(--font-size-normal);
+  padding: 5px 12px;
+  border-radius: 6px;
 }
 
 .chat-input:focus {
@@ -225,8 +240,9 @@ li { margin: 4px 0; }
   color: white;
   border: none;
   height: auto;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: var(--font-size-normal);
 }
 
 .send-button:hover {
@@ -243,7 +259,7 @@ li { margin: 4px 0; }
 .chat-card {
   background: transparent;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 12px 16px;
+  padding: 10px 14px;
   cursor: pointer;
   transition: background-color 0.15s ease;
 }
@@ -258,8 +274,8 @@ li { margin: 4px 0; }
 
 /* Аватар */
 .chat-avatar {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -272,6 +288,7 @@ li { margin: 4px 0; }
 .message-time {
   color: #858585;
   font-size: var(--font-size-small);
+  opacity: 0.8;
 }
 
 /* Имя отправителя */
@@ -280,6 +297,7 @@ li { margin: 4px 0; }
   font-weight: 600;
   font-size: var(--font-size-small);
   margin-bottom: 4px;
+  padding-left: 6px;
 }
 
 /* Эффект при наведении на сообщение */
@@ -289,7 +307,7 @@ li { margin: 4px 0; }
 
 /* Скроллбар для чата */
 .chat-scrollbar::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .chat-scrollbar::-webkit-scrollbar-track {
@@ -298,14 +316,14 @@ li { margin: 4px 0; }
 
 .chat-scrollbar::-webkit-scrollbar-thumb {
   background: #424242;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 /* Анимация появления сообщения */
 @keyframes messageAppear {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(5px);
   }
   to {
     opacity: 1;
@@ -314,7 +332,7 @@ li { margin: 4px 0; }
 }
 
 .message-appear {
-  animation: messageAppear 0.2s ease-out;
+  animation: messageAppear 0.15s ease-out;
 }
 
 /* Индикатор подключения */
@@ -324,7 +342,7 @@ li { margin: 4px 0; }
   gap: 4px;
   font-size: var(--font-size-small);
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .connection-status-connected {
@@ -348,9 +366,22 @@ li { margin: 4px 0; }
   background: rgba(139, 92, 246, 0.1);
   color: #8b5cf6;
   font-size: var(--font-size-small);
-  padding: 2px 6px;
-  border-radius: 10px;
+  padding: 2px 5px;
+  border-radius: 8px;
   margin-left: 6px;
+}
+
+/* Улучшенные отступы для контейнера сообщений */
+.chat-messages-container {
+  padding: 12px 16px;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+/* Граница между временем и текстом в сообщении */
+.message-bubble-sent .border-t,
+.message-bubble-received .border-t {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* === МОДАЛЬНЫЕ ОКНА === */
@@ -520,7 +551,7 @@ li { margin: 4px 0; }
 }
 
 .modal-scrollbar::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .modal-scrollbar::-webkit-scrollbar-track {
@@ -529,7 +560,7 @@ li { margin: 4px 0; }
 
 .modal-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .modal-scrollbar::-webkit-scrollbar-thumb:hover {

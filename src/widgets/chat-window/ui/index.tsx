@@ -122,13 +122,6 @@ export const ChatWindow = () => {
               {activeChat?.isGroup && <span className="group-badge">Группа</span>}
             </h2>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${isConnected ? 'status-online' : 'status-offline'}`}></div>
-                <p className="text-[13px] status-online">В сети</p>
-              </div>
-              <span className={`connection-status ${isConnected ? 'connection-status-connected' : 'connection-status-disconnected'}`}>
-                {isConnected ? '✓ WS' : '✗ WS'}
-              </span>
               {activeChat && (
                 <span className="text-[12px] text-gray-500">
                   {activeChat.members?.length || 0} участников
@@ -140,7 +133,7 @@ export const ChatWindow = () => {
       </div>
 
       {/* Сообщения */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 chat-scrollbar">
+      <div className="flex-1 overflow-y-auto px-8 py-6 space-y-5 chat-scrollbar"> {/* Увеличено px-6 до px-8, py-4 до py-6, space-y-4 до space-y-5 */}
         {activeChatMessages.length === 0 ? (
           <div className="chat-placeholder h-full flex flex-col items-center justify-center">
             <div className="text-4xl mb-4 opacity-30">💬</div>
@@ -162,28 +155,28 @@ export const ChatWindow = () => {
             return (
               <div
                 key={msg.id}
-                className={`flex ${isMyMessage ? 'justify-end' : 'justify-start'} message-appear`}
+                className={`flex ${isMyMessage ? 'justify-end' : 'justify-start'} message-appear mx-2`}
               >
-                <div className="max-w-[70%]">
+                <div className={`max-w-[70%] min-w-[60px] ${isMyMessage ? 'mr-4' : 'ml-4'}`}>
                   {/* Имя отправителя для групповых чатов */}
                   {showSender && (
-                    <div className="message-sender mb-1 ml-2">
+                    <div className="message-sender mb-2 ml-2">
                       {msg.user?.displayName || msg.user?.username || 'Пользователь'}
                     </div>
                   )}
                   
                   {/* Сообщение */}
                   <div
-                    className={`px-4 py-3 ${isMyMessage ? 'message-bubble-sent' : 'message-bubble-received'} ${
+                    className={`px-5 py-4 ${isMyMessage ? 'message-bubble-sent' : 'message-bubble-received'}
                       isTemporary ? 'message-bubble-temporary' : ''
                     }`}
                   >
-                    <p className="text-[14px] leading-relaxed whitespace-pre-wrap break-words">
+                    <p className={`text-[14px] leading-relaxed whitespace-pre-wrap break-words ${isMyMessage ? 'text-right' : 'text-left'}`}>
                       {msg.text}
                     </p>
                     
                     {/* Время и статус */}
-                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/10">
+                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/10"> {/* Увеличено mt-2 до mt-3, pt-2 до pt-3 */}
                       <span className="message-time text-[11px]">
                         {formatTime(new Date(msg.createdAt))}
                       </span>
@@ -206,7 +199,7 @@ export const ChatWindow = () => {
       </div>
 
       {/* Ввод сообщения */}
-      <div className="p-5 border-t border-gray-800 bg-[#252526]">
+      <div className="p-6 border-t border-gray-800 bg-[#252526]"> {/* Увеличено p-5 до p-6 */}
         <div className="flex items-end gap-4">
           <div className="flex-1">
             <textarea
@@ -216,10 +209,10 @@ export const ChatWindow = () => {
               onFocus={() => handleTyping(true)}
               onBlur={() => handleTyping(false)}
               placeholder="Введите сообщение (Shift+Enter для новой строки)..."
-              className="chat-input w-full p-4 rounded text-[14px] resize-none min-h-[80px]"
+              className="chat-input w-full p-5 rounded text-[16px] resize-none max-h-[50px]" /* Увеличено p-4 до p-5 */
               rows={2}
             />
-            <div className="text-[12px] text-gray-500 mt-2 flex items-center gap-4">
+            <div className="text-[12px] text-gray-500 mt-3 flex items-center gap-4"> {/* Увеличено mt-2 до mt-3 */}
               {message.length > 0 && (
                 <span>{message.length} символов</span>
               )}
@@ -230,7 +223,7 @@ export const ChatWindow = () => {
           <button
             onClick={handleSend}
             disabled={!message.trim()}
-            className="send-button px-6 py-4 text-[14px] font-medium"
+            className="send-button px-7 py-5 text-[14px] font-medium" /* Увеличено px-6 py-4 до px-7 py-5 */
           >
             Отправить
           </button>
