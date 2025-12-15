@@ -30,15 +30,6 @@ export const RegisterForm = () => {
     }
   }, [isAuth, navigate]);
   
-  // Тестовые данные для быстрого заполнения
-  const handleTestData = () => {
-    setEmail(`user${Date.now()}@mail.ru`);
-    setUsername(`user_${Date.now().toString().slice(-6)}`);
-    setDisplayName(`Тестовый Пользователь`);
-    setPassword('test123');
-    setConfirmPassword('test123');
-  };
-  
   const validateForm = () => {
     const newErrors: typeof errors = {};
     
@@ -140,15 +131,6 @@ export const RegisterForm = () => {
       
       <div className="pt-8 pb-14">
         <h2 className="text-2xl font-semibold text-center text-gray-100">Регистрация</h2>
-        <div className="mt-4 text-center text-sm text-gray-400">
-          <button 
-            type="button"
-            onClick={handleTestData}
-            className="text-blue-400 hover:text-blue-300 underline"
-          >
-            Заполнить тестовыми данными
-          </button>
-        </div>
       </div>
       
       <form onSubmit={handleSubmit}>
