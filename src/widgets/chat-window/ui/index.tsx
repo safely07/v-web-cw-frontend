@@ -14,7 +14,6 @@ export const ChatWindow = () => {
   const messages = useStore(state => state.messages);
   const loadMessages = useStore(state => state.loadMessages);
   const sendMessage = useStore(state => state.sendMessage);
-  const handleIncomingMessage = useStore(state => state.handleIncomingMessage);
   
   // Получаем все методы из useWebSocket
   const { isConnected, sendTyping, joinChat, leaveChat } = useWebSocket();
@@ -133,7 +132,7 @@ export const ChatWindow = () => {
       </div>
 
       {/* Сообщения */}
-      <div className="flex-1 overflow-y-auto px-8 py-6 space-y-5 chat-scrollbar"> {/* Увеличено px-6 до px-8, py-4 до py-6, space-y-4 до space-y-5 */}
+      <div className="flex-1 overflow-y-auto px-8 py-6 space-y-5 chat-scrollbar">
         {activeChatMessages.length === 0 ? (
           <div className="chat-placeholder h-full flex flex-col items-center justify-center">
             <div className="text-4xl mb-4 opacity-30">💬</div>
@@ -176,7 +175,7 @@ export const ChatWindow = () => {
                     </p>
                     
                     {/* Время и статус */}
-                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/10"> {/* Увеличено mt-2 до mt-3, pt-2 до pt-3 */}
+                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/10">
                       <span className="message-time text-[11px]">
                         {formatTime(new Date(msg.createdAt))}
                       </span>
@@ -199,7 +198,7 @@ export const ChatWindow = () => {
       </div>
 
       {/* Ввод сообщения */}
-      <div className="p-6 border-t border-gray-800 bg-[#252526]"> {/* Увеличено p-5 до p-6 */}
+      <div className="p-6 border-t border-gray-800 bg-[#252526]">
         <div className="flex items-end gap-4">
           <div className="flex-1">
             <textarea
@@ -209,10 +208,10 @@ export const ChatWindow = () => {
               onFocus={() => handleTyping(true)}
               onBlur={() => handleTyping(false)}
               placeholder="Введите сообщение (Shift+Enter для новой строки)..."
-              className="chat-input w-full p-5 rounded text-[16px] resize-none max-h-[50px]" /* Увеличено p-4 до p-5 */
+              className="chat-input w-full p-5 rounded text-[16px] resize-none max-h-[50px]"
               rows={2}
             />
-            <div className="text-[12px] text-gray-500 mt-3 flex items-center gap-4"> {/* Увеличено mt-2 до mt-3 */}
+            <div className="text-[12px] text-gray-500 mt-3 flex items-center gap-4">
               {message.length > 0 && (
                 <span>{message.length} символов</span>
               )}
@@ -223,7 +222,7 @@ export const ChatWindow = () => {
           <button
             onClick={handleSend}
             disabled={!message.trim()}
-            className="send-button px-7 py-5 text-[14px] font-medium" /* Увеличено px-6 py-4 до px-7 py-5 */
+            className="send-button px-7 py-5 text-[14px] font-medium" 
           >
             Отправить
           </button>

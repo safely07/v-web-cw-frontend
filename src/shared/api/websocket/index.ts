@@ -30,7 +30,7 @@ class WebSocketService {
   private userId: string | null = null; // Добавляем сохранение ID пользователя
 
   constructor() {
-    // Пока пусто
+    
   }
 
   // Установка колбэков

@@ -1,4 +1,3 @@
-// lib/zustand/use-websocket.ts
 import { useEffect, useCallback, useState } from 'react';
 import { websocketService } from '../../api/websocket';
 import { useStore } from '../../lib/zustand/store-context';
@@ -45,13 +44,12 @@ export const useWebSocket = () => {
       },
       onTyping: (data: any) => {
         console.log('⌨️ useWebSocket: Пользователь печатает', data);
-        // Здесь можно добавить логику для отображения "печатает..."
       },
       onStatusChange: (data: any) => {
         console.log('🔄 useWebSocket: Изменение статуса', data);
         // Здесь можно обновить статус в сторе
         if (currentUser && data.userId !== currentUser.id) {
-          // TODO: Обновить статус пользователя в чатах
+          
         }
       },
       onConnect: () => {
