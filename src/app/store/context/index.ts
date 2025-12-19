@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 import { type StoreApi, useStore as defaultUseStore } from 'zustand';
-import { type TAppStore } from '../../../app/store';
+import { type TAppStore } from '@app/store';
 
 export const StoreContext = createContext<StoreApi<TAppStore> | null>(null);
 

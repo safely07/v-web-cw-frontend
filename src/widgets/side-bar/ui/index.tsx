@@ -1,13 +1,30 @@
-import { PressButton } from '../../../shared/ui/press-button';
-import { useStore } from '../../../shared/lib/zustand/store-context';
+import { PressButton } from '@/shared/ui/press-button';
+import { useStore } from '@/app/store';
+import { UseSocket } from '@/app/web-socket';
+import { useEffect } from 'react';
 
 export const Sidebar = () => {
   const currentUser = useStore(state => state.currentUser);
   const logout = useStore(state => state.logout);
-  
+  const isAuth = useStore(state => state.isAuth);
+  const socketContext = UseSocket();
+
   const handleLogout = () => {
     logout();
   };
+
+  useEffect(() => {
+      if (isAuth && socketContext?.socket) {
+        const socket = socketContext.socket;
+        
+        if (!socket.connected) {
+          socket.disconnect();
+        }
+        
+        socket.emit('update-user-status', { isOnline: false });
+        
+      }
+  }, [isAuth, socketContext]);
 
   return (
     <div className="sidebar-header p-4">
