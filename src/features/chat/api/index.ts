@@ -1,8 +1,8 @@
-import { API_URL } from '@/shared/api';
+import configApi from "@/config";
 
 export const chatApi = {
   createChat: async (interlocutorId: string) => {
-    const response = await fetch(`${API_URL}/api/chats`, {
+    const response = await fetch(`${configApi.apiUrl}/api/chats`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -18,7 +18,7 @@ export const chatApi = {
   },
   
   getChats: async () => {
-    const response = await fetch(`${API_URL}/api/chats`, {
+    const response = await fetch(`${configApi.apiUrl}/api/chats`, {
       credentials: 'include',
     });
     
@@ -30,7 +30,7 @@ export const chatApi = {
   },
   
   getMessages: async (chatId: string): Promise<any> => {
-    const response = await fetch(`http://localhost:3001/api/chats/${chatId}/messages`, {
+    const response = await fetch(`${configApi.apiUrl}/api/chats/${chatId}/messages`, {
       credentials: 'include'
     });
     
@@ -43,7 +43,7 @@ export const chatApi = {
   },
   
   sendMessage: async (chatId: string, text: string) => {
-    const response = await fetch(`${API_URL}/api/chats/${chatId}/messages`, {
+    const response = await fetch(`${configApi.apiUrl}/api/chats/${chatId}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -59,7 +59,7 @@ export const chatApi = {
   },
   
   getAllUsers: async () => {
-    const response = await fetch(`${API_URL}/api/users`, {
+    const response = await fetch(`${configApi.apiUrl}/api/users`, {
       credentials: 'include',
     });
     

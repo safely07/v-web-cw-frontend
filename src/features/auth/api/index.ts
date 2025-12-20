@@ -1,8 +1,8 @@
-import { API_URL } from "@/shared/api";
+import configApi from "@/config";
 
 export const authApi = {
   login: async (email: string, password: string) => {
-    const response = await fetch(`${API_URL}/api/login`, {
+    const response = await fetch(`${configApi.apiUrl}/api/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -18,7 +18,7 @@ export const authApi = {
   },
   
   logout: async () => {
-    await fetch(`${API_URL}/api/logout`, {
+    await fetch(`${configApi.apiUrl}/api/logout`, {
       method: 'POST',
       credentials: 'include',
     });
@@ -26,7 +26,7 @@ export const authApi = {
   
   checkAuth: async (): Promise<boolean> => {
     try {
-      const response = await fetch(`${API_URL}/api/check-auth`, {
+      const response = await fetch(`${configApi.apiUrl}/api/check-auth`, {
         credentials: 'include',
       });
       return response.ok;
@@ -36,7 +36,7 @@ export const authApi = {
   },
 
   register: async (email:string, password: string, username: string, displayName: string) => {
-    const response = await fetch(`${API_URL}/api/register`, {
+    const response = await fetch(`${configApi.apiUrl}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

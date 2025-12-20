@@ -2,7 +2,7 @@ import { type ReactNode, useState, useEffect, useCallback } from 'react';
 import { io, type Socket } from 'socket.io-client';
 import { SocketContext } from '@/app/web-socket';
 import { useStore } from '@/app/store';
-import { API_URL } from '@shared/api';
+import configApi from '@/config';
 import type { TChat } from '@/entities/chat';
 import type { TMessage } from '@/entities/message';
 
@@ -16,7 +16,7 @@ export const SocketProvider = ({ children }: { children?: ReactNode }) => {
   const connect = useCallback(() => {
     if (socket?.connected) return;
 
-    const newSocket = io(API_URL, {
+    const newSocket = io(configApi.wsUrl, {
       withCredentials: true,
       autoConnect: false,
       reconnection: true,
