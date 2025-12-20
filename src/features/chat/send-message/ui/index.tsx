@@ -9,7 +9,7 @@ type TSendMessageProps = {
     activeChat: TChat | null,
 }
 
-export const SendMessageForm = ({ currentUser, activeChat }: TSendMessageProps) => {
+export const SendMessageForm = ({ activeChat }: TSendMessageProps) => {
     const [message, setMessage] = useState('');
     const sendMessage = useStore(state => state.sendMessageOfActiveChat);
     const socket = useSocket().socket;
