@@ -2,17 +2,17 @@ import type { TChat } from "@/entities/chat";
 import type { TUser } from "@/entities/user";
 import { useState } from "react";
 import { useStore } from "@/app/store";
-import { UseSocket } from "@/app/web-socket";
+import { useSocket } from "@/app/web-socket";
 
 type TSendMessageProps = {
     currentUser: TUser | null,
     activeChat: TChat | null,
 }
 
-export const SendMessageForm = ({currentUser, activeChat}: TSendMessageProps) => {
+export const SendMessageForm = ({ currentUser, activeChat }: TSendMessageProps) => {
     const [message, setMessage] = useState('');
     const sendMessage = useStore(state => state.sendMessageOfActiveChat);
-    const socket = UseSocket().socket;
+    const socket = useSocket().socket;
 
     const handleSend = async () => {
         if (!activeChat || !message.trim()) return;
@@ -20,7 +20,7 @@ export const SendMessageForm = ({currentUser, activeChat}: TSendMessageProps) =>
         try {
             console.log('Отправка сообщения:', message);
             await sendMessage(message);
-            socket.emit('new-message', {chatId: activeChat.id, userId: currentUser?.id});
+            socket.emit('send-message', { chatId: activeChat.id, text: message });
             setMessage('');
         } catch (error) {
             console.error('Ошибка отправки:', error);
@@ -29,39 +29,81 @@ export const SendMessageForm = ({currentUser, activeChat}: TSendMessageProps) =>
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          handleSend();
+            e.preventDefault();
+            handleSend();
         }
-      };
-    
+    };
+
+    const isDisabled = !activeChat || !message.trim();
+
     return (
-        <div className="p-6 border-t border-gray-800 bg-[#252526]">
-        <div className="flex items-end gap-4">
-          <div className="flex-1">
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={handleKeyPress}
-              placeholder="Введите сообщение (Shift+Enter для новой строки)..."
-              className="chat-input w-full p-5 rounded text-[16px] resize-none max-h-[50px]"
-              rows={2}
-            />
-            <div className="text-[12px] text-gray-500 mt-3 flex items-center gap-4">
-              {message.length > 0 && (
-                <span>{message.length} символов</span>
-              )}
-              <span>Enter для отправки</span>
+        <div className="p-4 border-t border-[var(--border-color)] bg-[var(--panel-background)]">
+            <div className="flex items-end gap-3">
+                <div className="flex-1">
+                    <textarea
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        onKeyDown={handleKeyPress}
+                        placeholder={activeChat ? "Введите сообщение..." : "Выберите чат для отправки сообщений"}
+                        disabled={!activeChat}
+                        className={`
+                            w-full px-4 py-3
+                            bg-[var(--input-background)]
+                            border border-[var(--input-border)]
+                            rounded-lg
+                            text-[var(--input-foreground)]
+                            text-[13px]
+                            placeholder:text-[var(--input-placeholder)]
+                            resize-none
+                            focus:outline-none
+                            focus:border-[var(--input-focus-border)]
+                            focus:shadow-[var(--input-focus-shadow)]
+                            transition-all
+                            disabled:opacity-50
+                            disabled:cursor-not-allowed
+                            max-h-32
+                            min-h-[44px]
+                        `}
+                        rows={1}
+                    />
+                    
+                    {/* Helper text */}
+                    <div className="flex items-center justify-between mt-2">
+                        <div className="text-[11px] text-[var(--text-muted)]">
+                            {message.length > 0 ? (
+                                <span>{message.length} символов</span>
+                            ) : (
+                                <span>Shift+Enter для новой строки</span>
+                            )}
+                        </div>
+                        <div className="text-[11px] text-[var(--text-muted)]">
+                            Enter для отправки
+                        </div>
+                    </div>
+                </div>
+                
+                <button
+                    onClick={handleSend}
+                    disabled={isDisabled}
+                    className={`
+                        px-5 py-3
+                        bg-[var(--button-background)]
+                        hover:bg-[var(--button-hover)]
+                        text-[var(--button-foreground)]
+                        text-[13px]
+                        font-medium
+                        rounded-lg
+                        transition-all
+                        disabled:opacity-50
+                        disabled:cursor-not-allowed
+                        disabled:hover:bg-[var(--button-background)]
+                        whitespace-nowrap
+                        active:scale-[0.98]
+                    `}
+                >
+                    Отправить
+                </button>
             </div>
-          </div>
-          
-          <button
-            onClick={handleSend}
-            disabled={!message.trim()}
-            className="send-button px-7 py-5 text-[14px] font-medium" 
-          >
-            Отправить
-          </button>
         </div>
-      </div>
     );
-}
+};

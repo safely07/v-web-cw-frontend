@@ -1,62 +1,91 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useStore } from '@/app/store';
 import { NewChatModal } from '@/features/chat/add-new-chat';
-import { ChatElement } from '@/entities/chat';
-import { useSocketChatSubscriptions } from '@/features/chat/hooks';
+import { ChatElement, type TChat } from '@/entities/chat';
 
 export const ChatList = () => {
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
   const chats = useStore(state => state.chats);
-  const addNewChat = useStore(state => state.addNewChat);
+  const activeChat = useStore(state => state.activeChat);
+  const loadMessages = useStore(state => state.loadMessages);
   const setActiveChat = useStore(state => state.setActiveChat);
-
-  useEffect(() => {
-      useSocketChatSubscriptions({
-        handleNewChat: addNewChat
-      })
-  },[]);
 
   const handleNewChatClick = () => {
     setIsNewChatModalOpen(true);
   };
 
-  const handleChatCreated = (interlocutorId: string) => {
-    console.log('Чат создан с пользователем:', interlocutorId);
-    const newChat = chats.find(chat => 
-      chat.interlocutor?.id == interlocutorId
-    );
+  const handleChatCreated = (newChat: TChat) => {
+    console.log('Переключение на чат ', newChat.id);
+    
     if (newChat) {
       setActiveChat(newChat);
     }
   };
 
+  const handleClickChat = async (chat: TChat) => {
+    await loadMessages(chat.id);
+    setActiveChat(chat);
+  };
+
   return (
     <>
-      <div className="flex-1 overflow-y-auto chat-sidebar chat-scrollbar">
-        <div className="p-5 border-b border-gray-800">
+      <div className="h-full flex flex-col bg-[var(--sidebar-background)]">
+        {/* Header */}
+        <div className="p-4 border-b border-[var(--border-color)]">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[16px] font-semibold text-white">Чаты</h2>
+            <h2 className="text-[15px] font-semibold text-[var(--text-heading)]">
+              Чаты
+            </h2>
+            <span className="text-xs text-[var(--text-muted)] bg-[var(--badge-bg)] px-2 py-1 rounded">
+              {chats.length}
+            </span>
           </div>
           
+          {/* New Chat Button */}
           <button 
             onClick={handleNewChatClick}
-            className="send-button w-full py-3 text-[14px]"
+            className={`
+              w-full py-2.5
+              bg-[var(--button-background)]
+              hover:bg-[var(--button-hover)]
+              text-[var(--button-foreground)]
+              text-[13px]
+              font-medium
+              rounded
+              transition-colors
+              active:scale-[0.98]
+            `}
           >
-            Новый чат
+            + Новый чат
           </button>
         </div>
         
-        <div>
+        {/* Chats List */}
+        <div className="flex-1 overflow-y-auto chat-scrollbar">
           {chats.map((chat) => (
-            <ChatElement chat={chat} name={chat.name ? chat.name : 'Неизвестный '+chat.id} />
-            ))
-          }
+            <div 
+              key={chat.id} 
+              onClick={() => handleClickChat(chat)}
+              className="hover:bg-[var(--hover-bg)] transition-colors"
+            >
+              <ChatElement 
+                chat={chat} 
+                isActive={activeChat?.id === chat.id} 
+                name={chat.name || `Чат ${chat.id.slice(0, 8)}...`}
+              />
+            </div>
+          ))}
           
+          {/* Empty state */}
           {chats.length === 0 && (
-            <div className="chat-placeholder py-12">
+            <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
               <div className="text-3xl mb-4 opacity-30">💬</div>
-              <p className="text-[14px] text-gray-400">Чатов пока нет</p>
-              <p className="text-[13px] text-gray-500 mt-2">Создайте первый чат!</p>
+              <p className="text-sm text-[var(--text-secondary)] mb-1">
+                Чатов пока нет
+              </p>
+              <p className="text-xs text-[var(--text-muted)]">
+                Создайте первый чат, нажав кнопку выше
+              </p>
             </div>
           )}
         </div>

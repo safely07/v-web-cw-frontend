@@ -2,7 +2,7 @@ import { API_URL } from '@/shared/api';
 
 export const chatApi = {
   createChat: async (interlocutorId: string) => {
-    const response = await fetch(`${API_URL}/chats`, {
+    const response = await fetch(`${API_URL}/api/chats`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -18,7 +18,7 @@ export const chatApi = {
   },
   
   getChats: async () => {
-    const response = await fetch(`${API_URL}/chats`, {
+    const response = await fetch(`${API_URL}/api/chats`, {
       credentials: 'include',
     });
     
@@ -29,21 +29,21 @@ export const chatApi = {
     return response.json();
   },
   
-  getCurrentUsersMessages: async () => {
-    const response = await fetch(
-      `${API_URL}/chats/messages`,
-      { credentials: 'include' }
-    );
+  getMessages: async (chatId: string): Promise<any> => {
+    const response = await fetch(`http://localhost:3001/api/chats/${chatId}/messages`, {
+      credentials: 'include'
+    });
     
     if (!response.ok) {
-      throw new Error('Не удалось загрузить сообщения');
+      const error = await response.json();
+      throw new Error(error.error || 'Ошибка загрузки сообщений');
     }
     
     return response.json();
   },
   
   sendMessage: async (chatId: string, text: string) => {
-    const response = await fetch(`${API_URL}/chats/${chatId}/messages`, {
+    const response = await fetch(`${API_URL}/api/chats/${chatId}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -59,7 +59,7 @@ export const chatApi = {
   },
   
   getAllUsers: async () => {
-    const response = await fetch(`${API_URL}/users`, {
+    const response = await fetch(`${API_URL}/api/users`, {
       credentials: 'include',
     });
     

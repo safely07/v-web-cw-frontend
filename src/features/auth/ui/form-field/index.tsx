@@ -1,37 +1,73 @@
+
 export const FormField = ({ 
   label, 
-  type, 
+  type = "text", 
   value, 
   onChange, 
   placeholder, 
-  disabled,
-  error,
-  required = false
-}: {
-  label: string;
-  type: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder: string;
-  disabled?: boolean;
-  error?: string;
-  required?: boolean;
+  disabled = false, 
+  error = "", 
+  required = false, 
+  className = "", 
+  containerClassName = "" 
+}: { 
+  label: string; 
+  type?: string; 
+  value: string; 
+  onChange: (value: string) => void; 
+  placeholder: string; 
+  disabled?: boolean; 
+  error?: string; 
+  required?: boolean; 
+  className?: string; 
+  containerClassName?: string; 
 }) => (
-  <div className="w-full max-w-[340px]">
-    <label className="block text-base font-medium text-gray-300 mb-3">
-      {label} {required && <span className="text-red-400">*</span>}
+  <div className={`flex flex-col gap-[var(--element-spacing)] ${containerClassName}`}>
+    {/* Метка с индикатором обязательного поля */}
+    <label 
+      className="text-[var(--text-primary)] text-[var(--font-size-sm)] font-medium"
+    >
+      {label}
+      {required && <span className="text-[var(--error)] ml-1">*</span>}
     </label>
+
+    {/* Поле ввода */}
     <input
       type={type}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className={`w-full px-4 py-3 bg-[var(--input-background)] border ${error ? 'border-red-500' : 'border-gray-600'} rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500`}
       disabled={disabled}
-      required={required}
+      className={`
+        w-full
+        px-3
+        h-[var(--input-height)]
+        bg-[var(--input-background)]
+        text-[var(--input-foreground)]
+        border border-[var(--input-border)]
+        rounded-[var(--border-radius)]
+        placeholder:text-[var(--input-placeholder)]
+        font-[var(--font-ui)]
+        text-[var(--font-size-md)]
+        transition-all duration-[var(--transition)]
+        focus:outline-none
+        focus:border-[var(--input-focus-border)]
+        focus:shadow-[var(--input-focus-shadow)]
+        disabled:bg-[var(--button-disabled)]
+        disabled:text-[var(--text-muted)]
+        disabled:cursor-not-allowed
+        hover:border-[var(--input-focus-border)]
+        ${error ? 'border-[var(--error)] focus:border-[var(--error)]' : ''}
+        ${className}
+      `}
     />
+
+    {/* Сообщение об ошибке */}
     {error && (
-      <p className="text-red-400 text-sm mt-2">{error}</p>
+      <div className="flex items-center gap-2 text-[var(--error)] text-[var(--font-size-xs)]">
+        <span className="text-lg">⚠</span>
+        <span>{error}</span>
+      </div>
     )}
   </div>
 );

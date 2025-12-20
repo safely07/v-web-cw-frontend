@@ -1,19 +1,21 @@
 import { createContext, useContext } from "react";
 import { type Socket } from "socket.io-client";
 
-type TSocketContext = {
-    socket: Socket,
-    cleanupSocketListeners: (()=>void) | null,
+export type TSocketContext = {
+    socket: Socket;
+    isConnected: boolean;
+    connect: () => void;
+    disconnect: () => void;
 }
 
 export const SocketContext = createContext<TSocketContext | null>(null);
 
-export const UseSocket = () => {
-    const socket = useContext(SocketContext);
+export const useSocket = () => {
+    const socketContext = useContext(SocketContext);
 
-    if (!socket) {
-        throw new Error('useWebSocket must be used within WebSocketProvider');
-    };
+    if (!socketContext) {
+        throw new Error('useSocket must be used within SocketProvider');
+    }
 
-    return socket;
+    return socketContext;
 }

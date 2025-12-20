@@ -10,7 +10,7 @@ export type TAppStore = {
     chats: TChat[];
     activeChat: TChat | null;
 
-    messages: TMessage[];
+    messages: Record<string, TMessage[]>;
 
     isLoading: boolean;
 
@@ -25,9 +25,10 @@ export type TAppStore = {
 
     addNewMessage: (message: TMessage) => void;
     sendMessageOfActiveChat: (text: string) => void;
-    loadMessagesInActiveChat: () => TMessage[];
+    loadMessages: (chatId: string) => Promise<any>;
 
-    updateUserStatus: (isOnline: boolean) => void;
+    updateInterlocutorStatus: (userId:string, isOnline: boolean) => void;
 
     getInterlocutor: () => TUser | undefined;
+
 };

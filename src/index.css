@@ -8,32 +8,417 @@
   box-sizing: border-box;
 }
 
-/* === CSS ПЕРЕМЕННЫЕ === */
+/* === CSS ПЕРЕМЕННЫЕ ДЛЯ ТЕМНОЙ ТЕМЫ (VS CODE STYLE) === */
 :root {
-  --background: #1e1e1e;
-  --foreground: #cccccc;
-  --list-activeSelectionBackground: #094771;
-  --button-background: #0e639c;
+  /* Основные цвета */
+  --background: #1e1e1e;                    /* Основной фон */
+  --foreground: #cccccc;                    /* Основной текст */
+  --sidebar-background: #252526;            /* Фон боковой панели */
+  --panel-background: #2d2d30;              /* Фон панелей */
+  --editor-background: #1e1e1e;             /* Фон редактора/чата */
   
-  /* Дополнительные для мессенджера */
-  --sidebar-background: #252526;
-  --input-background: #3c3c3c;
-  --chat-background: #2d2d30;
-  --message-sent: #0e639c;
-  --message-received: #3c3c3c;
-  --accent: #3794ff;
-  --online: #4ec9b0;
-  --offline: #808080;
-  --error: #f44747;
-  --success: #89d185;
-  --warning: #d7ba7d;
+  /* Интерактивные элементы */
+  --button-background: #0e639c;             /* Основные кнопки */
+  --button-hover: #1177bb;                  /* Ховер кнопок */
+  --button-secondary: #3c3c3c;              /* Вторичные кнопки */
+  --button-disabled: #464647;               /* Неактивные кнопки */
+  --button-foreground: #ffffff;             /* Текст кнопок */
   
+  /* Ввод и формы */
+  --input-background: #3c3c3c;              /* Фон полей ввода */
+  --input-border: #3c3c3c;                  /* Граница полей ввода */
+  --input-foreground: #cccccc;              /* Текст в полях ввода */
+  --input-placeholder: #858585;             /* Плейсхолдер */
+  --input-focus-border: #007acc;            /* Граница при фокусе */
+  --input-focus-shadow: 0 0 0 1px #007acc;  /* Тень при фокусе */
+  
+  /* Сообщения в чате */
+  --message-sent-bg: #0e639c;               /* Отправленные сообщения */
+  --message-sent-text: #ffffff;             /* Текст отправленных */
+  --message-received-bg: #2d2d30;           /* Полученные сообщения */
+  --message-received-text: #cccccc;         /* Текст полученных */
+  --message-system-bg: #323233;             /* Системные сообщения */
+  --message-system-text: #b0b0b0;           /* Текст системных */
+  --message-timestamp: #858585;             /* Время сообщений */
+  --message-border-radius: 6px;             /* Закругление сообщений */
+  
+  /* Статусы пользователей */
+  --status-online: #4ec9b0;                 /* В сети (C# в VS Code) */
+  --status-away: #d7ba7d;                   /* Отошел (TypeScript) */
+  --status-dnd: #f44747;                    /* Не беспокоить (ошибки) */
+  --status-offline: #808080;                /* Не в сети */
+  --status-busy: #c586c0;                   /* Занят (ключевые слова) */
+  --status-invisible: #666666;              /* Невидимый */
+  
+  /* Акценты и выделения */
+  --accent-primary: #007acc;                /* Основной акцент */
+  --accent-secondary: #68217a;              /* Вторичный акцент */
+  --selection-bg: #094771;                  /* Выделение активное */
+  --selection-inactive: #37373d;            /* Неактивное выделение */
+  --hover-bg: #2a2d2e;                      /* Фон при наведении */
+  
+  /* Уведомления и состояния */
+  --error: #f48771;                         /* Ошибки */
+  --warning: #d7ba7d;                       /* Предупреждения */
+  --success: #89d185;                       /* Успех */
+  --info: #9cdcfe;                          /* Информация */
+  --error-bg: #5a1f1f;                      /* Фон ошибок */
+  --warning-bg: #5a4c29;                    /* Фон предупреждений */
+  --success-bg: #2d5a2d;                    /* Фон успеха */
+  --info-bg: #06395c;                       /* Фон информации */
+  
+  /* Разделители и границы */
+  --border-color: #454545;                  /* Основные границы */
+  --border-light: #333333;                  /* Светлые границы */
+  --border-dark: #1e1e1e;                   /* Темные границы */
+  --divider-color: #3c3c3c;                 /* Разделители */
+  
+  /* Скроллбар (для темной темы) */
+  --scrollbar-bg: transparent;              /* Фон скроллбара */
+  --scrollbar-track: #2d2d30;               /* Дорожка скроллбара */
+  --scrollbar-thumb: #424242;               /* Ползунок */
+  --scrollbar-thumb-hover: #4a4a4a;         /* Ползунок при наведении */
+  --scrollbar-width: 10px;                  /* Ширина скроллбара */
+  --scrollbar-radius: 5px;                  /* Закругление скроллбара */
+  
+  /* Текст */
+  --text-primary: #cccccc;                  /* Основной текст */
+  --text-secondary: #858585;                /* Вторичный текст */
+  --text-muted: #6b6b6b;                    /* Приглушенный текст */
+  --text-link: #3794ff;                     /* Ссылки */
+  --text-link-hover: #4da6ff;               /* Ссылки при наведении */
+  --text-heading: #ffffff;                  /* Заголовки */
+  
+  /* Элементы интерфейса */
+  --badge-bg: #4d4d4d;                      /* Фон бейджей */
+  --badge-text: #ffffff;                    /* Текст бейджей */
+  --toolbar-bg: #333333;                    /* Фон тулбара */
+  --dropdown-bg: #2d2d30;                   /* Фон выпадающих списков */
+  --dropdown-border: #454545;               /* Граница выпадающих списков */
+  --dropdown-hover: #37373d;                /* Ховер в выпадающих списках */
+  --tooltip-bg: #2d2d30;                    /* Фон тултипов */
+  --tooltip-text: #cccccc;                  /* Текст тултипов */
+  
+  /* Шрифты */
   --font-code: 'Cascadia Code Variable', 'Consolas', 'Monaco', 'Courier New', monospace;
-  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Cascadia Code', 'Consolas', 'Monaco', 'Courier New', monospace;
   
+  /* Размеры */
+  --font-size-xs: 12px;                     /* Очень маленький */
+  --font-size-sm: 13px;                     /* Маленький */
+  --font-size-md: 14px;                     /* Средний (VS Code) */
+  --font-size-lg: 16px;                     /* Большой */
+  --font-size-xl: 18px;                     /* Очень большой */
+  --font-size-xxl: 20px;                    /* Заголовочный */
+  
+  /* Прочее */
   --line-height: 1.5;
-  --font-size-small: 12px;
-  --font-size-normal: 14px;
-  --font-size-large: 16px;
-  --font-size-xlarge: 18px;
+  --border-radius: 3px;                     /* Стандартные закругления */
+  --border-radius-lg: 5px;                  /* Большие закругления */
+  --border-radius-xl: 8px;                  /* Очень большие закругления */
+  --transition: 0.2s ease;                  /* Стандартная анимация */
+  --transition-fast: 0.1s ease;             /* Быстрая анимация */
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.3);   /* Тени */
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.2); /* Легкие тени */
+  
+  /* Размеры элементов */
+  --sidebar-width: 280px;                   /* Ширина боковой панели */
+  --sidebar-width-collapsed: 50px;          /* Свернутая боковая панель */
+  --input-height: 32px;                     /* Высота полей ввода */
+  --button-height: 32px;                    /* Высота кнопок */
+  --message-gap: 8px;                       /* Отступ между сообщениями */
+  --container-padding: 16px;                /* Отступы контейнеров */
+  --element-spacing: 8px;                   /* Отступы между элементами */
+}
+
+/* === CSS ПЕРЕМЕННЫЕ ДЛЯ СВЕТЛОЙ ТЕМЫ (УЛУЧШЕННАЯ) === */
+[data-theme="light"] {
+  /* Основные цвета */
+  --background: #f8f9fa;
+  --foreground: #2d3748;
+  --sidebar-background: #edf2f7;
+  --panel-background: #ffffff;
+  --editor-background: #ffffff;
+  
+  /* Интерактивные элементы */
+  --button-background: #3182ce;
+  --button-hover: #2b6cb0;
+  --button-secondary: #e2e8f0;
+  --button-disabled: #cbd5e0;
+  --button-foreground: #ffffff;
+  
+  /* Ввод и формы */
+  --input-background: #ffffff;
+  --input-border: #cbd5e0;
+  --input-foreground: #2d3748;
+  --input-placeholder: #a0aec0;
+  --input-focus-border: #3182ce;
+  --input-focus-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+  
+  /* Сообщения в чате */
+  --message-sent-bg: #3182ce;
+  --message-sent-text: #ffffff;
+  --message-received-bg: #edf2f7;
+  --message-received-text: #2d3748;
+  --message-system-bg: #e2e8f0;
+  --message-system-text: #718096;
+  --message-timestamp: #718096;
+  
+  /* Статусы пользователей */
+  --status-online: #38a169;
+  --status-away: #d69e2e;
+  --status-dnd: #e53e3e;
+  --status-offline: #a0aec0;
+  --status-busy: #805ad5;
+  --status-invisible: #cbd5e0;
+  
+  /* Акценты и выделения */
+  --accent-primary: #3182ce;
+  --accent-secondary: #6b46c1;
+  --selection-bg: #bee3f8;
+  --selection-inactive: #e2e8f0;
+  --hover-bg: #f7fafc;
+  
+  /* Уведомления и состояния */
+  --error: #e53e3e;
+  --warning: #d69e2e;
+  --success: #38a169;
+  --info: #3182ce;
+  --error-bg: #fed7d7;
+  --warning-bg: #feebc8;
+  --success-bg: #c6f6d5;
+  --info-bg: #bee3f8;
+  
+  /* Разделители и границы */
+  --border-color: #e2e8f0;
+  --border-light: #f7fafc;
+  --border-dark: #cbd5e0;
+  --divider-color: #e2e8f0;
+  
+  /* Скроллбар (для светлой темы) */
+  --scrollbar-bg: transparent;
+  --scrollbar-track: #f1f5f9;
+  --scrollbar-thumb: #cbd5e0;
+  --scrollbar-thumb-hover: #a0aec0;
+  
+  /* Текст */
+  --text-primary: #2d3748;
+  --text-secondary: #718096;
+  --text-muted: #a0aec0;
+  --text-link: #3182ce;
+  --text-link-hover: #2c5282;
+  --text-heading: #1a202c;
+  
+  /* Элементы интерфейса */
+  --badge-bg: #718096;
+  --badge-text: #ffffff;
+  --toolbar-bg: #f7fafc;
+  --dropdown-bg: #ffffff;
+  --dropdown-border: #e2e8f0;
+  --dropdown-hover: #f7fafc;
+  --tooltip-bg: #2d3748;
+  --tooltip-text: #ffffff;
+  
+  /* Тени */
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* === СТИЛИ СКРОЛЛБАРА (кроссбраузерные) === */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* Для Webkit браузеров (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: var(--scrollbar-radius);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: var(--scrollbar-radius);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--accent-primary);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Тонкая версия скроллбара для небольших элементов */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+/* Невидимый скроллбар, появляется при наведении */
+.scrollbar-auto::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.scrollbar-auto:hover::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+
+.scrollbar-auto {
+  scrollbar-width: none;
+}
+
+.scrollbar-auto:hover {
+  scrollbar-width: thin;
+}
+
+/* Специальные стили для разных элементов */
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  min-height: 40px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0;
+}
+
+/* Стили для Firefox */
+@supports (scrollbar-color: auto) {
+  .scrollbar-thin {
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-auto {
+    scrollbar-color: transparent transparent;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-auto:hover {
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    scrollbar-width: thin;
+  }
+}
+
+/* === БАЗОВЫЕ СТИЛИ ДЛЯ ВСЕХ ЭЛЕМЕНТОВ === */
+body {
+  background-color: var(--background);
+  color: var(--text-primary); /* Исправлено: было var(--foreground) */
+  font-family: var(--font-ui);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height);
+  transition: background-color var(--transition), color var(--transition);
+}
+
+/* Плавные переходы для всех цветовых изменений */
+* {
+  transition: background-color var(--transition-fast), 
+              border-color var(--transition-fast),
+              color var(--transition-fast),
+              fill var(--transition-fast),
+              stroke var(--transition-fast);
+}
+
+/* Сброс для form элементов */
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--text-primary); /* Исправлено: наследование цвета */
+}
+
+/* Улучшенные focus стили */
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Скрыть outline для мыши */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Дополнительные улучшения для светлой темы */
+[data-theme="light"] {
+  /* Улучшенная читаемость текста */
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+  
+  /* Более темные границы для лучшего контраста */
+  --border-color: #e2e8f0;
+  --input-border: #cbd5e0;
+  
+  /* Улучшенные тени */
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  
+  /* Лучший контраст для активных элементов */
+  --selection-bg: #bee3f8;
+  --hover-bg: #f7fafc;
+  
+  /* Улучшенные цвета для сообщений */
+  --message-received-bg: #edf2f7;
+  --message-received-text: #2d3748;
+  
+  /* Улучшенные статусы */
+  --status-online: #38a169;
+  --status-offline: #a0aec0;
+}
+
+/* Улучшение контраста для определенных элементов в светлой теме */
+[data-theme="light"] .bg-\[var\(--panel-background\)\] {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .border-\[var\(--border-color\)\] {
+  border-color: var(--border-color);
+}
+
+/* Улучшение для полей ввода в светлой теме */
+[data-theme="light"] input,
+[data-theme="light"] textarea {
+  background-color: var(--input-background);
+  color: var(--input-foreground);
+  border: 1px solid var(--input-border);
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] textarea:focus {
+  border-color: var(--input-focus-border);
+  box-shadow: var(--input-focus-shadow);
+}
+
+/* Улучшение для кнопок в светлой теме */
+[data-theme="light"] button:not(:disabled) {
+  background-color: var(--button-background);
+  color: var(--button-foreground);
+}
+
+[data-theme="light"] button:hover:not(:disabled) {
+  background-color: var(--button-hover);
 }

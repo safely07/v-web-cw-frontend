@@ -2,7 +2,7 @@ import { API_URL } from "@/shared/api";
 
 export const authApi = {
   login: async (email: string, password: string) => {
-    const response = await fetch(`${API_URL}/login`, {
+    const response = await fetch(`${API_URL}/api/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -18,7 +18,7 @@ export const authApi = {
   },
   
   logout: async () => {
-    await fetch(`${API_URL}/logout`, {
+    await fetch(`${API_URL}/api/logout`, {
       method: 'POST',
       credentials: 'include',
     });
@@ -26,7 +26,7 @@ export const authApi = {
   
   checkAuth: async (): Promise<boolean> => {
     try {
-      const response = await fetch(`${API_URL}/check-auth`, {
+      const response = await fetch(`${API_URL}/api/check-auth`, {
         credentials: 'include',
       });
       return response.ok;
@@ -36,7 +36,7 @@ export const authApi = {
   },
 
   register: async (email:string, password: string, username: string, displayName: string) => {
-    const response = await fetch(`${API_URL}/register`, {
+    const response = await fetch(`${API_URL}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { useStore } from '@/app/store';
 import { type TUser } from '@/entities/user';
 import { chatApi } from '@features/chat/api';
+import { useSocket } from '@/app/web-socket';
+import type { TChat } from '@/entities/chat';
 
 interface NewChatModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreateChat: (interlocutorId: string) => void;
+  onCreateChat: (newChat: TChat) => void;
 }
 
 export const NewChatModal = ({ isOpen, onClose, onCreateChat }: NewChatModalProps) => {
@@ -14,27 +16,29 @@ export const NewChatModal = ({ isOpen, onClose, onCreateChat }: NewChatModalProp
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<TUser[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<TUser[]>([]);
+  const socket = useSocket().socket;
   
   const createChat = useStore(state => state.createChat);
+  const getInterlocutor = useStore(state => state.getInterlocutor);
 
   useEffect(() => {
     const fetchUsers = async () => {
-        if (!isOpen) return;
-        
-        setLoading(true);
-        
-        try {
-            const usrs = await chatApi.getAllUsers();
-            setUsers(usrs);
-        } catch (error) {
-            console.error('Ошибка загрузки пользователей:', error);
-        } finally {
-            setLoading(false);
-        }
+      if (!isOpen) return;
+      
+      setLoading(true);
+      
+      try {
+        const usrs = await chatApi.getAllUsers();
+        setUsers(usrs);
+      } catch (error) {
+        console.error('Ошибка загрузки пользователей:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     if (isOpen) {
-        fetchUsers();
+      fetchUsers();
     }
   }, [isOpen]);
 
@@ -55,9 +59,13 @@ export const NewChatModal = ({ isOpen, onClose, onCreateChat }: NewChatModalProp
 
   const handleCreateChat = async (userId: string) => {
     try {
-      await createChat(userId);
-      onCreateChat(userId);
+      const newChat = await createChat(userId);
+      onCreateChat(newChat);
       onClose();
+      
+      if (socket) {
+        socket.emit('create-chat', { interlocutorId: getInterlocutor()?.id });
+      }
     } catch (error) {
       console.error('Ошибка создания чата:', error);
     }
@@ -66,65 +74,88 @@ export const NewChatModal = ({ isOpen, onClose, onCreateChat }: NewChatModalProp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center modal-overlay">
-      <div className="modal-container w-full max-w-md mx-4">
-        <div className="modal-header p-4">
-          <div className="flex items-center justify-between">
-            <h2 className="modal-title">Новый чат</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div 
+        className="bg-[var(--panel-background)] rounded-lg border border-[var(--border-color)] shadow-xl w-full max-w-md mx-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="p-4 border-b border-[var(--border-color)]">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-[var(--text-heading)]">
+              Новый чат
+            </h2>
             <button
               onClick={onClose}
-              className="modal-close-button"
+              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--hover-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             >
               ✕
             </button>
           </div>
           
-          <div className="mt-4">
+          {/* Search input */}
+          <div>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Поиск пользователей..."
-              className="modal-input py-2"
+              placeholder="Поиск пользователей по имени, логину или email..."
+              className="w-full px-4 py-2.5 bg-[var(--input-background)] border border-[var(--input-border)] rounded-lg text-[var(--input-foreground)] placeholder:text-[var(--input-placeholder)] focus:outline-none focus:border-[var(--input-focus-border)] focus:shadow-[var(--input-focus-shadow)] transition-all"
               autoFocus
             />
           </div>
         </div>
 
+        {/* Users list */}
         <div className="max-h-[400px] overflow-y-auto chat-scrollbar">
           {loading ? (
-            <div className="p-8 text-center">
-              <div className="inline-block animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-var(--accent)"></div>
-              <p className="mt-4 text-[13px] text-gray-400">Загрузка пользователей...</p>
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="w-8 h-8 animate-spin rounded-full border-2 border-[var(--accent-primary)] border-t-transparent mb-4"></div>
+              <p className="text-[var(--text-secondary)] text-sm">
+                Загрузка пользователей...
+              </p>
             </div>
           ) : filteredUsers.length === 0 ? (
-            <div className="p-8 text-center">
-              <p className="text-[13px] text-gray-400">
+            <div className="py-12 text-center">
+              <p className="text-[var(--text-secondary)] text-sm">
                 {searchQuery ? 'Пользователи не найдены' : 'Нет доступных пользователей'}
               </p>
             </div>
           ) : (
-            <div>
+            <div className="divide-y divide-[var(--divider-color)]">
               {filteredUsers.map(user => (
                 <button
                   key={user.id}
                   onClick={() => handleCreateChat(user.id)}
-                  className="modal-list-item flex items-center gap-3"
+                  className="w-full px-4 py-3 flex items-center gap-3 hover:bg-[var(--hover-bg)] transition-colors text-left"
                 >
-                  <div className="modal-user-avatar">
-                    {user.displayName?.charAt(0) || user.username?.charAt(0) || '?'}
+                  {/* Avatar */}
+                  <div className="w-10 h-10 rounded-full bg-[var(--accent-primary)] flex items-center justify-center text-white font-medium text-sm">
+                    {user.displayName?.charAt(0)?.toUpperCase() || 
+                     user.username?.charAt(0)?.toUpperCase() || '?'}
                   </div>
                   
+                  {/* User info */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-[13px] font-medium text-var(--foreground) truncate">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {user.displayName || user.username}
                       </h3>
                       {user.isOnline && (
-                        <div className="sidebar-status-indicator bg-var(--online)"></div>
+                        <div className="w-2 h-2 rounded-full bg-[var(--status-online)]"></div>
                       )}
                     </div>
-                    <p className="text-[12px] text-gray-500 truncate">{user.email}</p>
+                    <p className="text-xs text-[var(--text-secondary)] truncate">
+                      @{user.username}
+                      {user.displayName && user.username !== user.displayName && ` • ${user.displayName}`}
+                    </p>
+                  </div>
+                  
+                  {/* Email (hidden on small screens) */}
+                  <div className="hidden md:block ml-2">
+                    <p className="text-xs text-[var(--text-muted)] truncate max-w-[150px]">
+                      {user.email}
+                    </p>
                   </div>
                 </button>
               ))}
@@ -132,8 +163,9 @@ export const NewChatModal = ({ isOpen, onClose, onCreateChat }: NewChatModalProp
           )}
         </div>
 
-        <div className="modal-footer p-3">
-          <p className="text-[11px] text-center">
+        {/* Footer */}
+        <div className="p-3 border-t border-[var(--border-color)] bg-[var(--sidebar-background)]">
+          <p className="text-xs text-[var(--text-secondary)] text-center">
             Выберите пользователя для создания приватного чата
           </p>
         </div>

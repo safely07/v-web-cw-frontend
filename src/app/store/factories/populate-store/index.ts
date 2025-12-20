@@ -12,7 +12,7 @@ export const populateStore = (): StoreApi<TAppStore> =>
             isAuth: false,
             chats: [],
             activeChat: null,
-            messages: [],
+            messages: {},
             isLoading: false,
             error: null,
 
@@ -25,15 +25,11 @@ export const populateStore = (): StoreApi<TAppStore> =>
                     
                     console.log('Загружаем чаты пользователя...');
                     const chats = await chatApi.getChats();
-                    
-                    console.log('Загружаем сообщения текущего пользователя...');
-                    const messages = await chatApi.getCurrentUsersMessages();
 
                     set({
                         currentUser: authData.user,
                         isAuth: true,
                         chats,
-                        messages,
                         isLoading: false,
                     });
                     
@@ -53,6 +49,31 @@ export const populateStore = (): StoreApi<TAppStore> =>
                 }
             },
 
+            loadMessages: async (chatId: string) => {
+                set({ isLoading: true });
+                
+                try {
+                    let messages = await chatApi.getMessages(chatId);
+                    messages = (messages as TMessage[]).sort((a, b) => {
+                        const dateA = new Date(a.createdAt).getTime();
+                        const dateB = new Date(b.createdAt).getTime();
+                        return dateA - dateB; // Для ASC (от старых к новым)
+                    });
+                    set(state => ({
+                        messages: {
+                            ...state.messages,
+                            [chatId]: messages
+                        },
+                        isLoading: false
+                    }));
+                    
+                    return messages;
+                } catch (error: any) {
+                    set({ error: error.message, isLoading: false });
+                    throw error;
+                }
+            },
+
             logout: async () => {
                 try {
                     
@@ -62,7 +83,7 @@ export const populateStore = (): StoreApi<TAppStore> =>
                         currentUser: null,
                         isAuth: false,
                         chats: [],
-                        messages: [],
+                        messages: {},
                         activeChat: null,
                     });
                 }
@@ -78,7 +99,9 @@ export const populateStore = (): StoreApi<TAppStore> =>
             },
 
             setActiveChat: (chat: TChat) => {
-                set({activeChat: chat});
+                set({
+                    activeChat: chat,
+                });
             },
 
             createChat: async (interlocutorId: string) => {
@@ -94,15 +117,32 @@ export const populateStore = (): StoreApi<TAppStore> =>
             addNewChat: async (chat: TChat) => {
                 
                 set(state => ({
-                    chats: [...state.chats, chat]
+                    chats: [...state.chats, chat],
                 }));
             },
 
-            addNewMessage: async (message: TMessage) => {
+            addNewMessage: (message: TMessage) => {
                 
-                set(state => ({
-                        messages: [...state.messages, message]
-                }));
+                if (!message?.chatId) return;
+                
+                console.log('📝 addNewMessage для чата:', message.chatId);
+                
+                set(state => {
+                    const newMessages = { ...state.messages };
+                    
+                    const chatMessages = newMessages[message.chatId] 
+                        ? [...newMessages[message.chatId]] 
+                        : [];
+                    
+                    chatMessages.push(message);
+                    
+                    newMessages[message.chatId] = chatMessages;
+                    
+                    return {
+                        ...state,
+                        messages: newMessages
+                    };
+                });
             },
 
             sendMessageOfActiveChat: async (text: string) => {
@@ -115,22 +155,38 @@ export const populateStore = (): StoreApi<TAppStore> =>
                 };
             },
 
-            loadMessagesInActiveChat: () => {
-                const { messages, activeChat } = get();
-  
-                if (!activeChat || !messages) {
-                    return [];
-                }
-                
-                return messages.filter(message => message.chatId === activeChat.id);
-            },
-            
-            updateUserStatus: (isOnline: boolean) => {
-                set(state => ({
-                    currentUser: state.currentUser 
-                    ? { ...state.currentUser, isOnline }
-                    : null
-                }));
+            updateInterlocutorStatus: (userId: string, isOnline: boolean) => {
+                set(state => {
+                    const updatedChats = state.chats.map(chat => {
+                    if (chat.interlocutor?.id === userId) {
+                        return {
+                        ...chat,
+                        interlocutor: {
+                            ...chat.interlocutor,
+                            isOnline: isOnline
+                        }
+                        };
+                    }
+                    return chat;
+                    });
+                    
+                    let updatedActiveChat = state.activeChat;
+                    if (state.activeChat?.interlocutor?.id === userId) {
+                    updatedActiveChat = {
+                        ...state.activeChat,
+                        interlocutor: {
+                        ...state.activeChat.interlocutor,
+                        isOnline: isOnline
+                        }
+                    };
+                    }
+                    
+                    return {
+                    ...state,
+                    chats: updatedChats,
+                    activeChat: updatedActiveChat,
+                    };
+                });
             },
             
             getInterlocutor: () => {
