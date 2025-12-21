@@ -15,12 +15,14 @@ export const ChatList = () => {
   };
 
   const handleChatCreated = (newChat: TChat) => {
-    console.log('Переключение на чат ', newChat.id);
+    console.log('Переключение на чат ', newChat?.id);
     
-    if (newChat) {
+    if (newChat && newChat.id) {
       setActiveChat(newChat);
-    }
-  };
+    } else {
+      console.error('Неверный формат чата:', newChat);
+  }
+};
 
   const handleClickChat = async (chat: TChat) => {
     await loadMessages(chat.id);

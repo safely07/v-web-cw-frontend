@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useStore } from '@/app/store';
 
 type TSettingsModalProps = {
   isOpen: boolean;
@@ -9,8 +8,7 @@ type TSettingsModalProps = {
 type TTheme = 'light' | 'dark' | 'system';
 
 export const SettingsModal = ({ isOpen, onClose }: TSettingsModalProps) => {
-  const currentUser = useStore(state => state.currentUser);
-  const [activeTab, setActiveTab] = useState<| 'account' | 'appearance'>('appearance');
+  const [activeTab, setActiveTab] = useState<|'appearance'>('appearance');
   const [theme, setTheme] = useState<TTheme>(() => {
     const savedTheme = localStorage.getItem('theme') as TTheme;
     return savedTheme || 'system';
@@ -69,16 +67,6 @@ export const SettingsModal = ({ isOpen, onClose }: TSettingsModalProps) => {
                 🎨 Внешний вид
               </button>
               
-              <button
-                onClick={() => setActiveTab('account')}
-                className={`w-full text-left px-3 py-2 rounded text-sm transition-colors ${
-                  activeTab === 'account'
-                    ? 'bg-[var(--selection-bg)] text-[var(--text-primary)] font-medium'
-                    : 'text-[var(--text-secondary)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-primary)]'
-                }`}
-              >
-                👤 Аккаунт
-              </button>
             </nav>
           </div>
 
@@ -175,47 +163,6 @@ export const SettingsModal = ({ isOpen, onClose }: TSettingsModalProps) => {
               </div>
             )}
 
-            {activeTab === 'account' && (
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-[15px] font-medium text-[var(--text-primary)] mb-4">
-                    Информация об аккаунте
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    <div className="p-4 bg-[var(--hover-bg)] rounded border border-[var(--border-color)]">
-                      <p className="text-xs text-[var(--text-secondary)] mb-1">Email</p>
-                      <p className="text-sm text-[var(--text-primary)] font-medium">
-                        {currentUser?.email || 'Не указан'}
-                      </p>
-                    </div>
-                    
-                    <div className="p-4 bg-[var(--hover-bg)] rounded border border-[var(--border-color)]">
-                      <p className="text-xs text-[var(--text-secondary)] mb-1">Имя пользователя</p>
-                      <p className="text-sm text-[var(--text-primary)] font-medium">
-                        {currentUser?.username || 'Не указан'}
-                      </p>
-                    </div>
-                    
-                    <div className="p-4 bg-[var(--hover-bg)] rounded border border-[var(--border-color)]">
-                      <p className="text-xs text-[var(--text-secondary)] mb-1">Отображаемое имя</p>
-                      <p className="text-sm text-[var(--text-primary)] font-medium">
-                        {currentUser?.displayName || 'Не указано'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 pt-6 border-t border-[var(--border-color)]">
-                    <button className="px-4 py-2 bg-[var(--button-background)] hover:bg-[var(--button-hover)] text-[var(--button-foreground)] rounded text-sm font-medium transition-colors">
-                      Изменить данные
-                    </button>
-                    <button className="ml-3 px-4 py-2 bg-[var(--error)]/20 hover:bg-[var(--error)]/30 text-[var(--error)] rounded text-sm font-medium transition-colors">
-                      Сменить пароль
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 

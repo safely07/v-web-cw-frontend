@@ -107,18 +107,17 @@ export const populateStore = (): StoreApi<TAppStore> =>
             createChat: async (interlocutorId: string) => {
                 const chatData = await chatApi.createChat(interlocutorId);
                 
-                const newChat = chatData.chat;
+                if (get().chats.findIndex(chat => chat.id === chatData.id) === -1) get().addNewChat(chatData);
 
-                get().addNewChat(newChat);
-
-                return newChat;
+                return chatData;
             },
 
-            addNewChat: async (chat: TChat) => {
-                
-                set(state => ({
-                    chats: [...state.chats, chat],
-                }));
+            addNewChat: async (newChat: TChat) => {
+                if (get().chats.findIndex(chat => chat.id === newChat.id) === -1) {
+                    set(state => ({
+                        chats: [...state.chats, newChat],
+                    }));
+                }
             },
 
             addNewMessage: (message: TMessage) => {
