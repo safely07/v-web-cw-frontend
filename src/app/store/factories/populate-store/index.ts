@@ -105,9 +105,14 @@ export const populateStore = (): StoreApi<TAppStore> =>
             },
 
             createChat: async (interlocutorId: string) => {
-                const chatData = await chatApi.createChat(interlocutorId);
+                const chatData: TChat = await chatApi.createChat(interlocutorId);
                 
-                if (get().chats.findIndex(chat => chat.id === chatData.id) === -1) get().addNewChat(chatData);
+                if (get().chats.findIndex(chat => chat.id === chatData.id) === -1) {
+                    console.log('Новый чат добавляем');
+                    set(state => ({
+                        chats: [...state.chats, chatData],
+                    }));
+                };
 
                 return chatData;
             },
