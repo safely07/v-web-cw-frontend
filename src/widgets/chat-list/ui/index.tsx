@@ -32,9 +32,8 @@ export const ChatList = () => {
   return (
     <>
       <div className="h-full flex flex-col bg-[var(--sidebar-background)]">
-        {/* Header */}
-        <div className="p-4 border-b border-[var(--border-color)]">
-          <div className="flex items-center justify-between mb-4">
+        <div style={{ padding: '8px' }} className="border-b border-[var(--border-color)]">
+          <div style={{ marginBottom: '8px' }} className="flex items-center justify-between">
             <h2 className="text-[15px] font-semibold text-[var(--text-heading)]">
               Чаты
             </h2>
@@ -43,11 +42,10 @@ export const ChatList = () => {
             </span>
           </div>
           
-          {/* New Chat Button */}
           <button 
             onClick={handleNewChatClick}
             className={`
-              w-full py-2.5
+              w-full
               bg-[var(--button-background)]
               hover:bg-[var(--button-hover)]
               text-[var(--button-foreground)]
@@ -57,13 +55,13 @@ export const ChatList = () => {
               transition-colors
               active:scale-[0.98]
             `}
+            style={{ padding: '5px' }}
           >
             + Новый чат
           </button>
         </div>
         
-        {/* Chats List */}
-        <div className="flex-1 overflow-y-auto chat-scrollbar">
+        <div className="flex-1 overflow-y-auto chat-scrollbar" style={{ marginTop: '8px' }}>
           {chats.map((chat) => (
             <div 
               key={chat.id} 
@@ -78,11 +76,10 @@ export const ChatList = () => {
             </div>
           ))}
           
-          {/* Empty state */}
           {chats.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+            <div style={{ padding: '48px 16px' }} className="flex flex-col items-center justify-center text-center">
               <div className="text-3xl mb-4 opacity-30">💬</div>
-              <p className="text-sm text-[var(--text-secondary)] mb-1">
+              <p style={{ marginBottom: '4px' }} className="text-sm text-[var(--text-secondary)]">
                 Чатов пока нет
               </p>
               <p className="text-xs text-[var(--text-muted)]">

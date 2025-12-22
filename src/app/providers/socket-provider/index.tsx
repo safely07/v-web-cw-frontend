@@ -25,17 +25,17 @@ export const SocketProvider = ({ children }: { children?: ReactNode }) => {
     });
 
     newSocket.on('connect', () => {
-      console.log('✅ WebSocket подключен');
+      console.log('WebSocket подключен');
       setIsConnected(true);
     });
 
     newSocket.on('disconnect', () => {
-      console.log('🔌 WebSocket отключен');
+      console.log('WebSocket отключен');
       setIsConnected(false);
     });
 
     newSocket.on('connect_error', (error) => {
-      console.error('❌ WebSocket ошибка подключения:', error.message);
+      console.error('WebSocket ошибка подключения:', error.message);
       setIsConnected(false);
     });
 

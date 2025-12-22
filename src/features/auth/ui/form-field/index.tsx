@@ -23,7 +23,6 @@ export const FormField = ({
   containerClassName?: string; 
 }) => (
   <div className={`flex flex-col gap-[var(--element-spacing)] ${containerClassName}`}>
-    {/* Метка с индикатором обязательного поля */}
     <label 
       className="text-[var(--text-primary)] text-[var(--font-size-sm)] font-medium"
     >
@@ -31,7 +30,6 @@ export const FormField = ({
       {required && <span className="text-[var(--error)] ml-1">*</span>}
     </label>
 
-    {/* Поле ввода */}
     <input
       type={type}
       value={value}
@@ -62,7 +60,6 @@ export const FormField = ({
       `}
     />
 
-    {/* Сообщение об ошибке */}
     {error && (
       <div className="flex items-center gap-2 text-[var(--error)] text-[var(--font-size-xs)]">
         <span className="text-lg">⚠</span>

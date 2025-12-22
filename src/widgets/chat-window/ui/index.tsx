@@ -27,12 +27,10 @@ export const ChatWindow = () => {
     }
   }, [activeChat, loadMessages, socket]);
   
-  // Автопрокрутка при изменении сообщений
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
   
-  // Если нет активного чата
   if (!activeChat) {
     return (
       <div className="h-full flex flex-col items-center justify-center bg-[var(--background)]">
@@ -49,8 +47,7 @@ export const ChatWindow = () => {
 
   return (
     <div className="h-full flex flex-col">
-      {/* Chat Header */}
-      <div className="p-4 border-b border-[var(--border-color)] bg-[var(--panel-background)]">
+      <div style={{ padding: '8px' }} className="border-b border-[var(--border-color)] bg-[var(--panel-background)]">
         <div className="flex items-center gap-3">
           <div className="relative">
             <div className="w-10 h-10 rounded-full bg-[var(--accent-primary)]/20 flex items-center justify-center">
@@ -58,7 +55,6 @@ export const ChatWindow = () => {
                 {activeChat?.name?.slice(0,1)?.toUpperCase() || 'Ч'}
               </span>
             </div>
-            {/* Online status indicator */}
             <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[var(--panel-background)] ${
               interlocutorStatus ? 'bg-[var(--status-online)]' : 'bg-[var(--status-offline)]'
             }`} />
@@ -75,8 +71,7 @@ export const ChatWindow = () => {
         </div>
       </div>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2 chat-scrollbar bg-[var(--editor-background)]">
+      <div style={{ padding: '16px' }} className="flex-1 overflow-y-auto space-y-2 chat-scrollbar bg-[var(--editor-background)]">
         {chatMessages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center">
             <div className="text-3xl mb-3 opacity-20">💬</div>
@@ -105,7 +100,6 @@ export const ChatWindow = () => {
         )}
       </div>
 
-      {/* Message Input */}
       <SendMessageForm currentUser={currentUser} activeChat={activeChat}/>
     </div>
   );

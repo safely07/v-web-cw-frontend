@@ -74,50 +74,50 @@ export const NewChatModal = ({ isOpen, onClose, onCreateChat }: NewChatModalProp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div style={{padding: '16px'}} className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div 
-        className="bg-[var(--panel-background)] rounded-lg border border-[var(--border-color)] shadow-xl w-full max-w-md mx-4"
+        style={{width: '100%', maxWidth: '480px'}}
+        className="bg-[var(--panel-background)] rounded-lg border border-[var(--border-color)] shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="p-4 border-b border-[var(--border-color)]">
-          <div className="flex items-center justify-between mb-4">
+        <div style={{padding: '24px'}} className="border-b border-[var(--border-color)]">
+          <div style={{marginBottom: '20px'}} className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-[var(--text-heading)]">
               Новый чат
             </h2>
             <button
               onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--hover-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[var(--hover-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+              aria-label="Закрыть"
             >
               ✕
             </button>
           </div>
           
-          {/* Search input */}
           <div>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Поиск пользователей по имени, логину или email..."
-              className="w-full px-4 py-2.5 bg-[var(--input-background)] border border-[var(--input-border)] rounded-lg text-[var(--input-foreground)] placeholder:text-[var(--input-placeholder)] focus:outline-none focus:border-[var(--input-focus-border)] focus:shadow-[var(--input-focus-shadow)] transition-all"
+              className="w-full px-4 py-3 bg-[var(--input-background)] border border-[var(--input-border)] rounded-lg text-[var(--input-foreground)] placeholder:text-[var(--input-placeholder)] focus:outline-none focus:border-[var(--input-focus-border)] focus:shadow-[var(--input-focus-shadow)] transition-all"
               autoFocus
+              style={{fontSize: '15px'}}
             />
           </div>
         </div>
 
-        {/* Users list */}
-        <div className="max-h-[400px] overflow-y-auto chat-scrollbar">
+        <div style={{maxHeight: '400px'}} className="overflow-y-auto chat-scrollbar">
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <div className="w-8 h-8 animate-spin rounded-full border-2 border-[var(--accent-primary)] border-t-transparent mb-4"></div>
-              <p className="text-[var(--text-secondary)] text-sm">
+            <div style={{padding: '48px 0'}} className="flex flex-col items-center justify-center">
+              <div style={{marginBottom: '16px'}} className="w-12 h-12 animate-spin rounded-full border-3 border-[var(--accent-primary)] border-t-transparent"></div>
+              <p className="text-[var(--text-secondary)] text-base">
                 Загрузка пользователей...
               </p>
             </div>
           ) : filteredUsers.length === 0 ? (
-            <div className="py-12 text-center">
-              <p className="text-[var(--text-secondary)] text-sm">
+            <div style={{padding: '48px 0'}} className="text-center">
+              <p className="text-[var(--text-secondary)] text-base">
                 {searchQuery ? 'Пользователи не найдены' : 'Нет доступных пользователей'}
               </p>
             </div>
@@ -127,22 +127,21 @@ export const NewChatModal = ({ isOpen, onClose, onCreateChat }: NewChatModalProp
                 <button
                   key={user.id}
                   onClick={() => handleCreateChat(user.id)}
-                  className="w-full px-4 py-3 flex items-center gap-3 hover:bg-[var(--hover-bg)] transition-colors text-left"
+                  style={{padding: '16px 24px'}}
+                  className="w-full flex items-center gap-4 hover:bg-[var(--hover-bg)] transition-colors text-left"
                 >
-                  {/* Avatar */}
-                  <div className="w-10 h-10 rounded-full bg-[var(--accent-primary)] flex items-center justify-center text-white font-medium text-sm">
+                  <div className="w-12 h-12 rounded-full bg-[var(--accent-primary)] flex items-center justify-center text-white font-medium text-base flex-shrink-0">
                     {user.displayName?.charAt(0)?.toUpperCase() || 
                      user.username?.charAt(0)?.toUpperCase() || '?'}
                   </div>
                   
-                  {/* User info */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div style={{marginBottom: '6px'}} className="flex items-center gap-2">
                       <h3 className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {user.displayName || user.username}
                       </h3>
                       {user.isOnline && (
-                        <div className="w-2 h-2 rounded-full bg-[var(--status-online)]"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-[var(--status-online)]"></div>
                       )}
                     </div>
                     <p className="text-xs text-[var(--text-secondary)] truncate">
@@ -151,8 +150,7 @@ export const NewChatModal = ({ isOpen, onClose, onCreateChat }: NewChatModalProp
                     </p>
                   </div>
                   
-                  {/* Email (hidden on small screens) */}
-                  <div className="hidden md:block ml-2">
+                  <div style={{marginLeft: '8px'}} className="hidden md:block">
                     <p className="text-xs text-[var(--text-muted)] truncate max-w-[150px]">
                       {user.email}
                     </p>
@@ -163,8 +161,7 @@ export const NewChatModal = ({ isOpen, onClose, onCreateChat }: NewChatModalProp
           )}
         </div>
 
-        {/* Footer */}
-        <div className="p-3 border-t border-[var(--border-color)] bg-[var(--sidebar-background)]">
+        <div style={{padding: '16px'}} className="border-t border-[var(--border-color)] bg-[var(--sidebar-background)]">
           <p className="text-xs text-[var(--text-secondary)] text-center">
             Выберите пользователя для создания приватного чата
           </p>

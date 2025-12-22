@@ -57,7 +57,7 @@ export const populateStore = (): StoreApi<TAppStore> =>
                     messages = (messages as TMessage[]).sort((a, b) => {
                         const dateA = new Date(a.createdAt).getTime();
                         const dateB = new Date(b.createdAt).getTime();
-                        return dateA - dateB; // Для ASC (от старых к новым)
+                        return dateA - dateB;
                     });
                     set(state => ({
                         messages: {
@@ -113,7 +113,8 @@ export const populateStore = (): StoreApi<TAppStore> =>
             },
 
             addNewChat: async (newChat: TChat) => {
-                if (get().chats.findIndex(chat => chat.id === newChat.id) === -1) {
+                if ((get().chats.findIndex(chat => chat.id === newChat.id) === -1)&&(get().currentUser?.id === newChat?.interlocutor?.id)) {
+                    console.log('новый чат', newChat);
                     set(state => ({
                         chats: [...state.chats, newChat],
                     }));
@@ -124,7 +125,7 @@ export const populateStore = (): StoreApi<TAppStore> =>
                 
                 if (!message?.chatId) return;
                 
-                console.log('📝 addNewMessage для чата:', message.chatId);
+                console.log('addNewMessage для чата:', message.chatId);
                 
                 set(state => {
                     const newMessages = { ...state.messages };

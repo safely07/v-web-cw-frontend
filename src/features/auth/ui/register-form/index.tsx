@@ -20,14 +20,12 @@ export const RegisterForm = () => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
-    // Email validation
     if (!form.email.trim()) {
       newErrors.email = 'Email обязателен';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       newErrors.email = 'Некорректный email адрес';
     }
     
-    // Username validation
     if (!form.username.trim()) {
       newErrors.username = 'Имя пользователя обязательно';
     } else if (form.username.length < 3) {
@@ -38,14 +36,12 @@ export const RegisterForm = () => {
       newErrors.username = 'Только латинские буквы, цифры и подчеркивание';
     }
     
-    // Display name validation
     if (form.displayName.trim() && form.displayName.length < 2) {
       newErrors.displayName = 'Минимум 2 символа';
     } else if (form.displayName.length > 30) {
       newErrors.displayName = 'Максимум 30 символов';
     }
     
-    // Password validation
     if (!form.password) {
       newErrors.password = 'Пароль обязателен';
     } else if (form.password.length < 6) {
@@ -54,7 +50,6 @@ export const RegisterForm = () => {
       newErrors.password = 'Максимум 50 символов';
     }
     
-    // Confirm password validation
     if (!form.confirmPassword) {
       newErrors.confirmPassword = 'Подтвердите пароль';
     } else if (form.password !== form.confirmPassword) {
@@ -108,7 +103,6 @@ export const RegisterForm = () => {
   const updateField = (field: keyof typeof form) => 
     (value: string) => {
       setForm(prev => ({ ...prev, [field]: value }));
-      // Clear field error when user starts typing
       if (errors[field]) {
         setErrors(prev => ({ ...prev, [field]: '' }));
       }
@@ -120,70 +114,72 @@ export const RegisterForm = () => {
   ) : null;
   
   return (
-    <div className="bg-[var(--panel-background)] rounded-2xl border border-[var(--border-color)] shadow-xl w-full max-w-lg">
-      {/* Контейнер с отступами от краев панели */}
-      <div className="p-8">
-        
-        {/* Заголовок */}
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-[var(--text-heading)] mb-2">
+    <div style={{margin: '8px'}} className="bg-[var(--panel-background)] rounded-2xl border border-[var(--border-color)] shadow-xl w-full max-w-lg">
+      <div style={{padding: '24px'}}>
+        <div style={{marginBottom: '8px'}} className="text-center">
+          <h2 style={{marginBottom: '8px'}} className="text-2xl font-bold text-[var(--text-heading)]">
             Регистрация
           </h2>
-          <p className="text-[var(--text-secondary)] text-sm">
+          <p className="text-[var(--text-secondary)] text-base">
             Создайте новый аккаунт
           </p>
         </div>
         
-        {/* Форма с отступами */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit}>
+          <div style={{marginBottom: '16px'}}>
+            <FormField
+              label="Email"
+              type="email"
+              value={form.email}
+              onChange={updateField('email')}
+              placeholder="example@mail.ru"
+              error={errors.email}
+              disabled={loading}
+              required
+            />
+          </div>
           
-          <FormField
-            label="Email"
-            type="email"
-            value={form.email}
-            onChange={updateField('email')}
-            placeholder="example@mail.ru"
-            error={errors.email}
-            disabled={loading}
-            required
-          />
+          <div style={{marginBottom: '16px'}}>
+            <FormField
+              label="Имя пользователя"
+              type="text"
+              value={form.username}
+              onChange={updateField('username')}
+              placeholder="ivan_ivanov"
+              error={errors.username}
+              disabled={loading}
+              required
+            />
+          </div>
           
-          <FormField
-            label="Имя пользователя"
-            type="text"
-            value={form.username}
-            onChange={updateField('username')}
-            placeholder="ivan_ivanov"
-            error={errors.username}
-            disabled={loading}
-            required
-          />
+          <div style={{marginBottom: '16px'}}>
+            <FormField
+              label="Имя для отображения (необязательно)"
+              type="text"
+              value={form.displayName}
+              onChange={updateField('displayName')}
+              placeholder="Иван Иванов"
+              error={errors.displayName}
+              disabled={loading}
+            />
+          </div>
           
-          <FormField
-            label="Имя для отображения (необязательно)"
-            type="text"
-            value={form.displayName}
-            onChange={updateField('displayName')}
-            placeholder="Иван Иванов"
-            error={errors.displayName}
-            disabled={loading}
-          />
+          <div style={{marginBottom: '16px'}}>
+            <FormField
+              label="Пароль"
+              type="password"
+              value={form.password}
+              onChange={updateField('password')}
+              placeholder="••••••••"
+              error={errors.password}
+              disabled={loading}
+              required
+            />
+          </div>
           
-          <FormField
-            label="Пароль"
-            type="password"
-            value={form.password}
-            onChange={updateField('password')}
-            placeholder="••••••••"
-            error={errors.password}
-            disabled={loading}
-            required
-          />
-          
-          {/* Password strength indicator */}
           {form.password && !errors.password && (
-            <div className="mt-2">
-              <div className="flex items-center gap-2 mb-2">
+            <div style={{marginBottom: '16px'}}>
+              <div style={{marginBottom: '10px'}} className="flex items-center gap-2">
                 <span className="text-[var(--text-secondary)] text-sm">
                   Сложность пароля:
                 </span>
@@ -212,19 +208,21 @@ export const RegisterForm = () => {
             </div>
           )}
           
-          <FormField
-            label="Подтвердите пароль"
-            type="password"
-            value={form.confirmPassword}
-            onChange={updateField('confirmPassword')}
-            placeholder="••••••••"
-            error={errors.confirmPassword}
-            disabled={loading}
-            required
-          />
+          <div style={{marginBottom: '16px'}}>
+            <FormField
+              label="Подтвердите пароль"
+              type="password"
+              value={form.confirmPassword}
+              onChange={updateField('confirmPassword')}
+              placeholder="••••••••"
+              error={errors.confirmPassword}
+              disabled={loading}
+              required
+            />
+          </div>
           
           {errors.general && (
-            <div className="p-4 bg-[var(--error-bg)] border border-[var(--error)]/30 rounded-lg">
+            <div style={{marginBottom: '16px'}} className="p-5 bg-[var(--error-bg)] border border-[var(--error)]/30 rounded-lg">
               <p className="text-[var(--error)] text-sm text-center flex items-center justify-center gap-2">
                 <span className="text-base">⚠</span>
                 {errors.general}
@@ -232,41 +230,10 @@ export const RegisterForm = () => {
             </div>
           )}
           
-          <div className="p-4 bg-[var(--hover-bg)] border border-[var(--border-color)] rounded-lg">
-            <p className="text-[var(--text-primary)] text-sm font-medium mb-3">
-              Требования к регистрации:
-            </p>
-            <ul className="text-[var(--text-secondary)] text-sm space-y-2">
-              <li className="flex items-start gap-2">
-                <span className={`shrink-0 mt-0.5 ${form.email && !errors.email ? 'text-[var(--success)]' : 'text-[var(--text-muted)]'}`}>
-                  ✓
-                </span>
-                <span>Email должен быть действительным</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className={`shrink-0 mt-0.5 ${form.username && form.username.length >= 3 && !errors.username ? 'text-[var(--success)]' : 'text-[var(--text-muted)]'}`}>
-                  ✓
-                </span>
-                <span>Имя пользователя: 3-20 символов (латиница, цифры, _)</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className={`shrink-0 mt-0.5 ${form.password && form.password.length >= 6 && !errors.password ? 'text-[var(--success)]' : 'text-[var(--text-muted)]'}`}>
-                  ✓
-                </span>
-                <span>Пароль: минимум 6 символов</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className={`shrink-0 mt-0.5 ${form.confirmPassword && form.password === form.confirmPassword ? 'text-[var(--success)]' : 'text-[var(--text-muted)]'}`}>
-                  ✓
-                </span>
-                <span>Пароли должны совпадать</span>
-              </li>
-            </ul>
-          </div>
-          
           <button 
             type="submit"
             disabled={loading}
+            style={{marginBottom: '16px', padding: '4px 0'}}
             className={`
               w-full py-3.5 mt-2
               bg-[var(--button-background)] 
